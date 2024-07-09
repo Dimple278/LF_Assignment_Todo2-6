@@ -1,36 +1,39 @@
 import { User } from "../interface/userInterfaces";
 import { readFromFile, writeToFile } from "../utils/fileUtils";
+import ApiError from "../utils/apiError";
 
 let users: User[] = readFromFile("users");
-let nextUserId =
-  users.length > 0 ? Math.max(...users.map((user) => user.id)) + 1 : 1;
 
 export const getAllUsers = (): User[] => users;
 
-/**
- *
- * @param id
- * @returns
- */
 export const getUserById = (id: number): User => {
-  try {
-    const user = users.find((user) => user.id === id);
-    if (!user) {
-      throw Error("AMANNAN");
-    }
-    return user;
-  } catch (error) {
-    throw error;
+  const user = users.find((user) => user.id === id);
+  if (!user) {
+    throw new ApiError(404, `User with ID ${id} not found`);
   }
+  return user;
 };
 
-export const getUserByEmail = (email: string): User | undefined =>
-  users.find((user) => user.email === email);
+export const getUserByEmail = (email: string): User | undefined => {
+  const user = users.find((user) => user.email === email);
+  if (!user) {
+    throw new ApiError(404, `User with email ${email} not found`);
+  }
+  return user;
+};
 
 export const addUser = (user: User): User => {
+  if (users.some((existingUser) => existingUser.email === user.email)) {
+    throw new ApiError(400, `User with email ${user.email} already exists`);
+  }
+  user.id = generateNextUserId();
   users.push(user);
   writeToFile("users", users);
   return user;
 };
 
-export const generateNextUserId = (): number => nextUserId++;
+export const generateNextUserId = (): number => {
+  const maxId =
+    users.length > 0 ? Math.max(...users.map((user) => user.id)) : 0;
+  return maxId + 1;
+};
