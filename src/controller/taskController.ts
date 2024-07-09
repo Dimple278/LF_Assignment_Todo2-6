@@ -1,12 +1,6 @@
 import { Request, Response, NextFunction } from "express";
 import ApiError from "../utils/apiError";
-import {
-  fetchTasks,
-  fetchTaskById,
-  createTask,
-  modifyTask,
-  deleteTask,
-} from "../service/taskService";
+import * as taskService from "../service/taskService";
 import { Task } from "../interface/taskInterface";
 
 export const getAllTasks = (
@@ -15,7 +9,7 @@ export const getAllTasks = (
   next: NextFunction
 ): void => {
   try {
-    const tasks = fetchTasks();
+    const tasks = taskService.fetchTasks();
     res.json(tasks);
   } catch (error) {
     next(new ApiError(500, "Failed to fetch tasks"));
@@ -29,7 +23,7 @@ export const getTask = (
 ): void => {
   try {
     const taskId = parseInt(req.params.id);
-    const task = fetchTaskById(taskId);
+    const task = taskService.fetchTaskById(taskId);
     if (!task) {
       return next(new ApiError(404, "Task not found"));
     }
@@ -46,7 +40,7 @@ export const createNewTask = (
 ): void => {
   try {
     const { title, completed = false } = req.body;
-    const newTask = createTask(title, completed);
+    const newTask = taskService.createTask(title, completed);
     res.status(201).json(newTask);
   } catch (error) {
     next(new ApiError(500, "Failed to create task"));
@@ -62,7 +56,7 @@ export const updateExistingTask = (
     const taskId = parseInt(req.params.id);
     const updates: Partial<Pick<Task, "title" | "completed">> = req.body;
 
-    const updatedTask = modifyTask(taskId, updates);
+    const updatedTask = taskService.modifyTask(taskId, updates);
     if (!updatedTask) {
       return next(new ApiError(404, "Task not found"));
     }
@@ -79,7 +73,7 @@ export const deleteExistingTask = (
 ): void => {
   try {
     const taskId = parseInt(req.params.id);
-    const deletedTask = deleteTask(taskId);
+    const deletedTask = taskService.deleteTask(taskId);
     if (!deletedTask) {
       return next(new ApiError(404, "Task not found"));
     }

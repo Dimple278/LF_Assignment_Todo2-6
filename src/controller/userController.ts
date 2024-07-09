@@ -1,14 +1,6 @@
 import { Request, Response, NextFunction } from "express";
 import ApiError from "../utils/apiError";
-import {
-  fetchUsers,
-  fetchUserById,
-  fetchUserByEmail,
-  createUser,
-  validateUserCredentials,
-  generateTokens,
-  refreshAccessToken,
-} from "../service/userService";
+import * as userService from "../service/userService";
 
 export const getUser = (
   req: Request,
@@ -17,7 +9,7 @@ export const getUser = (
 ): void => {
   try {
     const userId = parseInt(req.params.id);
-    const user = fetchUserById(userId);
+    const user = userService.fetchUserById(userId);
     if (!user) {
       return next(new ApiError(404, "User not found"));
     }
@@ -33,7 +25,7 @@ export const getAllUsers = (
   next: NextFunction
 ): void => {
   try {
-    const users = fetchUsers();
+    const users = userService.fetchUsers();
     res.json(users);
   } catch (error) {
     next(new ApiError(500, "Failed to fetch users"));
@@ -47,11 +39,11 @@ export const loginUser = async (
 ): Promise<void> => {
   try {
     const { email, password } = req.body;
-    const user = await validateUserCredentials(email, password);
+    const user = await userService.validateUserCredentials(email, password);
     if (!user) {
       return next(new ApiError(401, "Invalid email or password"));
     }
-    const tokens = generateTokens(user);
+    const tokens = userService.generateTokens(user);
     res.json(tokens);
   } catch (error) {
     next(new ApiError(500, "Failed to log in user"));
@@ -65,10 +57,10 @@ export const createNewUser = async (
 ): Promise<void> => {
   try {
     const { name, email, password } = req.body;
-    if (fetchUserByEmail(email)) {
+    if (userService.fetchUserByEmail(email)) {
       return next(new ApiError(400, "Email already in use"));
     }
-    const newUser = await createUser(name, email, password);
+    const newUser = await userService.createUser(name, email, password);
     res.status(201).json(newUser);
   } catch (error) {
     next(new ApiError(500, "Failed to create user"));
@@ -85,7 +77,7 @@ export const refreshToken = (
     if (!refreshToken) {
       return next(new ApiError(400, "Refresh token is required"));
     }
-    const tokens = refreshAccessToken(refreshToken);
+    const tokens = userService.refreshAccessToken(refreshToken);
     if (!tokens) {
       return next(new ApiError(403, "Invalid refresh token"));
     }
