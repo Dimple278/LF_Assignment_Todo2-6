@@ -1,23 +1,17 @@
 import fs from "fs";
 import path from "path";
 
-const tasksFilePath = path.resolve(__dirname, "../data/tasks.json");
-const usersFilePath = path.resolve(__dirname, "../data/users.json");
+const getFilePath = (fileName: string): string => {
+  return path.resolve(__dirname, `../data/${fileName}.json`);
+};
 
-export const readTasksFromFile = (): any => {
-  const data = fs.readFileSync(tasksFilePath, "utf-8");
+export const readFromFile = (fileName: string): any => {
+  const filePath = getFilePath(fileName);
+  const data = fs.readFileSync(filePath, "utf-8");
   return JSON.parse(data);
 };
 
-export const writeTasksToFile = (tasks: any): void => {
-  fs.writeFileSync(tasksFilePath, JSON.stringify(tasks, null, 2), "utf-8");
-};
-
-export const readUsersFromFile = (): any => {
-  const data = fs.readFileSync(usersFilePath, "utf-8");
-  return JSON.parse(data);
-};
-
-export const writeUsersToFile = (users: any): void => {
-  fs.writeFileSync(usersFilePath, JSON.stringify(users, null, 2), "utf-8");
+export const writeToFile = (fileName: string, data: any): void => {
+  const filePath = getFilePath(fileName);
+  fs.writeFileSync(filePath, JSON.stringify(data, null, 2), "utf-8");
 };
