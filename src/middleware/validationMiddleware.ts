@@ -82,3 +82,26 @@ export const validateUserBody = (
   }
   next();
 };
+
+export const validateLoginBody = (
+  req: Request,
+  res: Response,
+  next: NextFunction
+): void => {
+  const { email, password } = req.body;
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  if (typeof email !== "string" || !emailRegex.test(email)) {
+    return next(
+      new ApiError(400, "Invalid login data: valid email is required")
+    );
+  }
+  if (typeof password !== "string" || password.length < 6) {
+    return next(
+      new ApiError(
+        400,
+        "Invalid login data: password is required and must be at least 6 characters long"
+      )
+    );
+  }
+  next();
+};

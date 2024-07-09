@@ -10,5 +10,11 @@
     "name": "cde",
     "email": "cde@gmail.com",
     "password": "cde123"
+  },
+  {
+    "id": 3,
+    "name": "demo",
+    "email": "demo@gmail.com",
+    "password": "$2a$10$wR.3uxYdAVRmt9H81C0u9OS6wERfIVRUpYn5tEbVeb.Uyx0RI2cme"
   }
 ]
