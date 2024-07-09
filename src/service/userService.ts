@@ -9,11 +9,7 @@ import {
   generateNextUserId,
 } from "../model/userModel";
 import config from "../config";
-
 const { secretKey, refreshSecretKey } = config;
-
-const SECRET_KEY = process.env.SECRET_KEY;
-const REFRESH_SECRET_KEY = process.env.REFRESH_SECRET_KEY;
 
 export const fetchUsers = (): User[] => getAllUsers();
 
@@ -26,7 +22,7 @@ export const createUser = async (
   name: string,
   email: string,
   password: string
-): Promise<User> => {
+): Promise<Omit<User, "password">> => {
   const hashedPassword = await bcrypt.hash(password, 10);
   const newUser: User = {
     id: generateNextUserId(),
@@ -34,7 +30,9 @@ export const createUser = async (
     email,
     password: hashedPassword,
   };
-  return addUser(newUser);
+  const addedUser = addUser(newUser);
+  const { password: _password, ...response } = addedUser;
+  return response;
 };
 
 export const validateUserCredentials = async (
