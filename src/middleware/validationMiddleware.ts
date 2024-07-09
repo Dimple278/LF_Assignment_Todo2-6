@@ -1,6 +1,11 @@
 import { Request, Response, NextFunction } from "express";
 import ApiError from "../utils/apiError";
 
+const regexValidationSchema = {
+  email: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
+  name: /^[a-zA-Z\s'-]+$/,
+};
+
 export const validateTaskId = (
   req: Request,
   res: Response,
@@ -58,16 +63,15 @@ export const validateUserBody = (
   next: NextFunction
 ): void => {
   const { name, email, password } = req.body;
-  if (typeof name !== "string") {
+  if (typeof name !== "string" || !regexValidationSchema.name.test(name)) {
     return next(
       new ApiError(
         400,
-        "Invalid user data: name is required and must be a string"
+        "Invalid user data: name is required and must be a valid string"
       )
     );
   }
-  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-  if (typeof email !== "string" || !emailRegex.test(email)) {
+  if (typeof email !== "string" || !regexValidationSchema.email.test(email)) {
     return next(
       new ApiError(400, "Invalid user data: valid email is required")
     );
@@ -89,8 +93,7 @@ export const validateLoginBody = (
   next: NextFunction
 ): void => {
   const { email, password } = req.body;
-  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-  if (typeof email !== "string" || !emailRegex.test(email)) {
+  if (typeof email !== "string" || !regexValidationSchema.email.test(email)) {
     return next(
       new ApiError(400, "Invalid login data: valid email is required")
     );
