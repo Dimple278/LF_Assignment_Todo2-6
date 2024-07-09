@@ -1,10 +1,7 @@
-import fs from "fs";
-import path from "path";
 import { User } from "../interfaces/userInterfaces";
+import { readUsersFromFile, writeUsersToFile } from "../utils/fileUtils";
 
-const usersFilePath = path.join(__dirname, "../../data/users.json");
-
-let users: User[] = JSON.parse(fs.readFileSync(usersFilePath, "utf-8"));
+let users: User[] = readUsersFromFile();
 let nextUserId =
   users.length > 0 ? Math.max(...users.map((user) => user.id)) + 1 : 1;
 
@@ -18,7 +15,7 @@ export const getUserByEmail = (email: string): User | undefined =>
 
 export const addUser = (user: User): User => {
   users.push(user);
-  fs.writeFileSync(usersFilePath, JSON.stringify(users, null, 2));
+  writeUsersToFile(users);
   return user;
 };
 
