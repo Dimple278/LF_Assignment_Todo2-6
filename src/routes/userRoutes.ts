@@ -1,20 +1,21 @@
 import express from "express";
 import {
-  validateLoginBody,
-  validateUserBody,
-} from "../middleware/validationMiddleware";
-import {
-  createNewUser,
-  getAllUsers,
   getUser,
   loginUser,
-} from "../controller/userCOntroller";
+  getAllUsers,
+  createNewUser,
+} from "../controller/userController";
+import {
+  validateUserBody,
+  validateLoginBody,
+} from "../middleware/validationMiddleware";
+import authenticateJWT from "../middleware/authMIddleware";
 
-const userRouter = express.Router();
+const router = express.Router();
 
-userRouter.get("/users", getAllUsers);
-userRouter.get("/users/:id", getUser);
-userRouter.post("/users", validateUserBody, createNewUser);
-userRouter.post("/users/login", validateLoginBody, loginUser);
+// router.get("/users", authenticateJWT, getAllUsers);
+router.get("/users/:id", authenticateJWT, getUser);
+router.post("/users", validateUserBody, createNewUser);
+router.post("/users/login", validateLoginBody, loginUser);
 
-export default userRouter;
+export default router;
