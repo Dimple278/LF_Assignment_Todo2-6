@@ -7,6 +7,7 @@ import {
   createUser,
   validateUserCredentials,
   generateTokens,
+  refreshAccessToken,
 } from "../service/userService";
 
 export const getUser = (
@@ -71,5 +72,25 @@ export const createNewUser = async (
     res.status(201).json(newUser);
   } catch (error) {
     next(new ApiError(500, "Failed to create user"));
+  }
+};
+
+export const refreshToken = (
+  req: Request,
+  res: Response,
+  next: NextFunction
+): void => {
+  try {
+    const { refreshToken } = req.body;
+    if (!refreshToken) {
+      return next(new ApiError(400, "Refresh token is required"));
+    }
+    const tokens = refreshAccessToken(refreshToken);
+    if (!tokens) {
+      return next(new ApiError(403, "Invalid refresh token"));
+    }
+    res.json(tokens);
+  } catch (error) {
+    next(new ApiError(500, "Failed to refresh access token"));
   }
 };

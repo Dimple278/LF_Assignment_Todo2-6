@@ -16,5 +16,11 @@
     "name": "demo",
     "email": "demo@gmail.com",
     "password": "$2a$10$wR.3uxYdAVRmt9H81C0u9OS6wERfIVRUpYn5tEbVeb.Uyx0RI2cme"
+  },
+  {
+    "id": 4,
+    "name": "demos",
+    "email": "demo1@gmail.com",
+    "password": "$2a$10$4GvDTYlaPeuRmHo0s8vPk.5XaJjgZ24TRDN3RIDNc6cOzO1BfGNWK"
   }
 ]

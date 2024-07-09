@@ -108,3 +108,20 @@ export const validateLoginBody = (
   }
   next();
 };
+
+export const validateRefreshTokenBody = (
+  req: Request,
+  res: Response,
+  next: NextFunction
+): void => {
+  const { refreshToken } = req.body;
+  if (typeof refreshToken !== "string") {
+    return next(
+      new ApiError(
+        400,
+        "Invalid refresh token data: refresh token is required and must be a string"
+      )
+    );
+  }
+  next();
+};

@@ -1,5 +1,5 @@
 import bcrypt from "bcryptjs";
-import jwt, { Secret } from "jsonwebtoken";
+import jwt, { JwtPayload, Secret } from "jsonwebtoken";
 import { User } from "../interfaces/userInterfaces";
 import {
   getAllUsers,
@@ -61,4 +61,27 @@ export const generateTokens = (user: User) => {
     { expiresIn: "7d" }
   );
   return { accessToken, refreshToken };
+};
+
+export const refreshAccessToken = (
+  refreshToken: string
+): { accessToken: string } | null => {
+  try {
+    const decoded = jwt.verify(
+      refreshToken,
+      refreshSecretKey as Secret
+    ) as JwtPayload;
+    const user = getUserByEmail(decoded.email);
+    if (!user) {
+      return null;
+    }
+    const accessToken = jwt.sign(
+      { id: user.id, email: user.email },
+      secretKey as Secret,
+      { expiresIn: "1h" }
+    );
+    return { accessToken };
+  } catch (error) {
+    return null;
+  }
 };
