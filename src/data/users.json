@@ -22,5 +22,11 @@
     "name": "demos",
     "email": "demo1@gmail.com",
     "password": "$2a$10$4GvDTYlaPeuRmHo0s8vPk.5XaJjgZ24TRDN3RIDNc6cOzO1BfGNWK"
+  },
+  {
+    "id": 5,
+    "name": "dimple",
+    "email": "dimple@example.com",
+    "password": "$2a$10$i04Gz8vOmN52yyhZZ.zpaewga8wIx709iOmjw0/ix9OKqgWx5eo46"
   }
 ]

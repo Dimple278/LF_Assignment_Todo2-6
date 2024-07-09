@@ -1,4 +1,4 @@
-import { Task } from "../interfaces/taskInterface";
+import { Task } from "../interface/taskInterface";
 import { readFromFile, writeToFile } from "../utils/fileUtils";
 
 let tasks: Task[] = readFromFile("tasks");

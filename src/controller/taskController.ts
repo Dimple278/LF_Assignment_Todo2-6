@@ -7,7 +7,7 @@ import {
   modifyTask,
   deleteTask,
 } from "../service/taskService";
-import { Task } from "../interfaces/taskInterface";
+import { Task } from "../interface/taskInterface";
 
 export const getAllTasks = (
   req: Request,

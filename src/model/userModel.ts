@@ -1,4 +1,4 @@
-import { User } from "../interfaces/userInterfaces";
+import { User } from "../interface/userInterfaces";
 import { readFromFile, writeToFile } from "../utils/fileUtils";
 
 let users: User[] = readFromFile("users");

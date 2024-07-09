@@ -1,6 +1,6 @@
 import bcrypt from "bcryptjs";
 import jwt, { JwtPayload, Secret } from "jsonwebtoken";
-import { User } from "../interfaces/userInterfaces";
+import { User } from "../interface/userInterfaces";
 import {
   getAllUsers,
   getUserById,

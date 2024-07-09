@@ -1,4 +1,4 @@
-import { Task } from "../interfaces/taskInterface";
+import { Task } from "../interface/taskInterface";
 import {
   getAllTasks,
   getTaskById,
