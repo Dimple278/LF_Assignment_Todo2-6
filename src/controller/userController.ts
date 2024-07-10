@@ -74,6 +74,43 @@ export const createNewUser = async (
   }
 };
 
+export const updateUser = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+): Promise<void> => {
+  try {
+    const userId = parseInt(req.params.id);
+    const updateData = req.body;
+
+    const updatedUser = await userService.updateUser(userId, updateData);
+    if (!updatedUser) {
+      return next(new ApiError(404, `User with ID ${userId} not found`));
+    }
+    res.json(updatedUser);
+  } catch (error) {
+    next(new ApiError(500, "Failed to update user"));
+  }
+};
+
+export const deleteUser = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+): Promise<void> => {
+  try {
+    const userId = parseInt(req.params.id);
+
+    const deletedUser = userService.deleteUser(userId);
+    if (!deletedUser) {
+      return next(new ApiError(404, `User with ID ${userId} not found`));
+    }
+    res.json(deletedUser);
+  } catch (error) {
+    next(new ApiError(500, "Failed to delete user"));
+  }
+};
+
 export const refreshToken = (
   req: Request,
   res: Response,

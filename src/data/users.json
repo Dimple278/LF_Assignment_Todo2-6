@@ -6,12 +6,6 @@
     "password": "abc@123"
   },
   {
-    "id": 2,
-    "name": "cde",
-    "email": "cde@gmail.com",
-    "password": "cde123"
-  },
-  {
     "id": 3,
     "name": "demo",
     "email": "demo@gmail.com",

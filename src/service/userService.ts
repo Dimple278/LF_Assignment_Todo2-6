@@ -6,9 +6,13 @@ import {
   getUserById,
   getUserByEmail,
   addUser,
+  updateUser as updateUserModel,
+  deleteUser as deleteUserModel,
   generateNextUserId,
 } from "../model/userModel";
 import config from "../config";
+import ApiError from "../error/apiError";
+
 const { secretKey, refreshSecretKey } = config;
 
 export const fetchUsers = (): User[] => getAllUsers();
@@ -34,6 +38,26 @@ export const createUser = async (
   const addedUser = addUser(newUser);
   const { password: _password, ...response } = addedUser;
   return response;
+};
+
+export const updateUser = async (
+  id: number,
+  updateData: Partial<User>
+): Promise<Omit<User, "password"> | null> => {
+  const user = updateUserModel(id, updateData);
+  if (!user) {
+    throw new ApiError(404, `User with ID ${id} not found`);
+  }
+  const { password, ...response } = user;
+  return response;
+};
+
+export const deleteUser = (id: number): User | null => {
+  const user = deleteUserModel(id);
+  if (!user) {
+    throw new ApiError(404, `User with ID ${id} not found`);
+  }
+  return user;
 };
 
 export const validateUserCredentials = async (
