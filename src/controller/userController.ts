@@ -1,6 +1,9 @@
 import { Request, Response, NextFunction } from "express";
 import ApiError from "../error/apiError";
 import * as userService from "../service/userService";
+import loggerWithNameSpace from "../logger";
+
+const logger = loggerWithNameSpace("UserController");
 
 export const getUser = (
   req: Request,
@@ -9,6 +12,9 @@ export const getUser = (
 ): void => {
   try {
     const userId = parseInt(req.params.id);
+
+    logger.info("Called getUser");
+
     const user = userService.fetchUserById(userId);
     if (!user) {
       return next(new ApiError(404, "User not found"));
