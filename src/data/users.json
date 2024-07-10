@@ -43,17 +43,31 @@
     "role": ""
   },
   {
-    "id": 10,
-    "name": "Super Admin",
-    "email": "superadmin@example.com",
-    "password": "$2a$10$FbqqCyYwa.T.nm1u6By8O.FsYi37bf5lYFNm4SlYoAqN/MKGAoUzC",
-    "role": "superadmin"
-  },
-  {
     "id": 11,
     "name": "abc",
     "email": "abc1@gmail.com",
     "password": "$2a$10$6Rk1ycmRTDFgwzCScOSLx.bgIUg2RanxsRy04L9lKseitg5ZLGi1S",
+    "role": ""
+  },
+  {
+    "id": 12,
+    "name": "Super Admin",
+    "email": "superadmin@example.com",
+    "password": "$2a$10$n18cVC7A6j19SSYbcjSPOeZ99KfFquwkuMe4t9CkdVwcpHmAZl/Sm",
+    "role": "superadmin"
+  },
+  {
+    "id": 13,
+    "name": "User A",
+    "email": "userA@example.com",
+    "password": "$2a$10$qeoPJ/qx5BlOP4by6EnG7.m31zhbAoxPGkVhJbNNkTpD6rNpqQyTK",
+    "role": ""
+  },
+  {
+    "id": 14,
+    "name": "User B",
+    "email": "userB@example.com",
+    "password": "$2a$10$ZAD.grYh2wYvoAAWhRwn2.dwAWZgdbqeaOkF2AKrlQTkvVe1WRyUC",
     "role": ""
   }
 ]

@@ -1,25 +1,38 @@
 import { Task } from "../interface/taskInterface";
-import * as taskModel from "../model/taskModel";
+import {
+  getAllTasks,
+  getTaskById,
+  addTask,
+  updateTask,
+  removeTask,
+  generateNextId,
+} from "../model/taskModel";
 
-export const fetchTasks = (): Task[] => taskModel.getAllTasks();
+export const fetchTasks = (userId: number): Task[] => getAllTasks(userId);
 
-export const fetchTaskById = (id: number): Task | undefined =>
-  taskModel.getTaskById(id);
+export const fetchTaskById = (id: number, userId: number): Task | null =>
+  getTaskById(id, userId);
 
-export const createTask = (title: string, completed: boolean): Task => {
+export const createTask = (
+  title: string,
+  completed: boolean,
+  userId: number
+): Task => {
   const newTask: Task = {
-    id: taskModel.generateNextId(),
+    id: generateNextId(),
     title,
-    completed,
+    completed: completed ?? false,
+    userId,
   };
-  return taskModel.addTask(newTask);
+  return addTask(newTask);
 };
 
 export const modifyTask = (
   id: number,
-  updates: Partial<Pick<Task, "title" | "completed">>
+  updates: Partial<Pick<Task, "title" | "completed">>,
+  userId: number
 ): Task | null => {
-  const task = taskModel.getTaskById(id);
+  const task = getTaskById(id, userId);
   if (!task) return null;
 
   Object.keys(updates).forEach((key) => {
@@ -29,7 +42,8 @@ export const modifyTask = (
     }
   });
 
-  return taskModel.updateTask(task);
+  return updateTask(task);
 };
 
-export const deleteTask = (id: number): Task | null => taskModel.removeTask(id);
+export const deleteTask = (id: number, userId: number): Task | null =>
+  removeTask(id, userId);

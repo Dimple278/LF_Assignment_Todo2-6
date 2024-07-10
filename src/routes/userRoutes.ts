@@ -16,7 +16,7 @@ import {
 import {
   authenticateJWT,
   authorizeSuperAdmin,
-} from "../middleware/authMiddleware";
+} from "../middleware/authMIddleware";
 
 const router = express.Router();
 

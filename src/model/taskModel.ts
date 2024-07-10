@@ -4,10 +4,11 @@ import ApiError from "../error/apiError";
 
 let tasks: Task[] = readFromFile("tasks");
 
-export const getAllTasks = (): Task[] => tasks;
+export const getAllTasks = (userId: number): Task[] =>
+  tasks.filter((task) => task.userId === userId);
 
-export const getTaskById = (id: number): Task => {
-  const task = tasks.find((task) => task.id === id);
+export const getTaskById = (id: number, userId: number): Task => {
+  const task = tasks.find((task) => task.id === id && task.userId === userId);
   if (!task) {
     throw new ApiError(404, `Task with ID ${id} not found`);
   }
@@ -21,7 +22,9 @@ export const addTask = (task: Task): Task => {
 };
 
 export const updateTask = (task: Task): Task => {
-  const index = tasks.findIndex((t) => t.id === task.id);
+  const index = tasks.findIndex(
+    (t) => t.id === task.id && t.userId === task.userId
+  );
   if (index === -1) {
     throw new ApiError(404, `Task with ID ${task.id} not found`);
   }
@@ -30,8 +33,10 @@ export const updateTask = (task: Task): Task => {
   return task;
 };
 
-export const removeTask = (id: number): Task => {
-  const index = tasks.findIndex((task) => task.id === id);
+export const removeTask = (id: number, userId: number): Task | null => {
+  const index = tasks.findIndex(
+    (task) => task.id === id && task.userId === userId
+  );
   if (index === -1) {
     throw new ApiError(404, `Task with ID ${id} not found`);
   }

@@ -11,7 +11,7 @@ if (!secretKey) {
 }
 
 export interface AuthRequest extends Request {
-  user?: JwtPayload | string;
+  user?: JwtPayload & { id: number; email: string };
 }
 
 const authenticateJWT = (
@@ -29,7 +29,7 @@ const authenticateJWT = (
         return next(new ApiError(403, "Forbidden: Invalid token"));
       }
 
-      req.user = user;
+      req.user = user as JwtPayload & { id: number; email: string };
       next();
     });
   } else {
@@ -42,13 +42,13 @@ const authorizeSuperAdmin = (
   res: Response,
   next: NextFunction
 ) => {
-  if (!req.user || typeof req.user === "string") {
+  if (!req.user) {
     return next(new ApiError(401, "Unauthorized"));
   }
 
-  const user = getUserById((req.user as JwtPayload).id);
+  const user = getUserById(req.user.id);
 
-  if (!user || user.role !== "superadmin") {
+  if (user.role !== "superadmin") {
     return next(new ApiError(403, "Forbidden"));
   }
 

@@ -2,14 +2,15 @@ import { Request, Response, NextFunction } from "express";
 import ApiError from "../error/apiError";
 import * as taskService from "../service/taskService";
 import { Task } from "../interface/taskInterface";
+import { AuthRequest } from "../middleware/authMIddleware";
 
 export const getAllTasks = (
-  req: Request,
+  req: AuthRequest,
   res: Response,
   next: NextFunction
 ): void => {
   try {
-    const tasks = taskService.fetchTasks();
+    const tasks = taskService.fetchTasks(req.user!.id);
     res.json(tasks);
   } catch (error) {
     next(new ApiError(500, "Failed to fetch tasks"));
@@ -17,13 +18,13 @@ export const getAllTasks = (
 };
 
 export const getTask = (
-  req: Request,
+  req: AuthRequest,
   res: Response,
   next: NextFunction
 ): void => {
   try {
     const taskId = parseInt(req.params.id);
-    const task = taskService.fetchTaskById(taskId);
+    const task = taskService.fetchTaskById(taskId, req.user!.id);
     if (!task) {
       return next(new ApiError(404, "Task not found"));
     }
@@ -33,22 +34,22 @@ export const getTask = (
   }
 };
 
-export const createNewTask = (
-  req: Request,
+export const createTask = (
+  req: AuthRequest,
   res: Response,
   next: NextFunction
 ): void => {
   try {
-    const { title, completed = false } = req.body;
-    const newTask = taskService.createTask(title, completed);
-    res.status(201).json(newTask);
+    const { title, completed } = req.body;
+    const task = taskService.createTask(title, completed, req.user!.id);
+    res.status(201).json(task);
   } catch (error) {
     next(new ApiError(500, "Failed to create task"));
   }
 };
 
-export const updateExistingTask = (
-  req: Request,
+export const updateTask = (
+  req: AuthRequest,
   res: Response,
   next: NextFunction
 ): void => {
@@ -56,7 +57,7 @@ export const updateExistingTask = (
     const taskId = parseInt(req.params.id);
     const updates: Partial<Pick<Task, "title" | "completed">> = req.body;
 
-    const updatedTask = taskService.modifyTask(taskId, updates);
+    const updatedTask = taskService.modifyTask(taskId, updates, req.user!.id);
     if (!updatedTask) {
       return next(new ApiError(404, "Task not found"));
     }
@@ -66,14 +67,14 @@ export const updateExistingTask = (
   }
 };
 
-export const deleteExistingTask = (
-  req: Request,
+export const deleteTask = (
+  req: AuthRequest,
   res: Response,
   next: NextFunction
 ): void => {
   try {
     const taskId = parseInt(req.params.id);
-    const deletedTask = taskService.deleteTask(taskId);
+    const deletedTask = taskService.deleteTask(taskId, req.user!.id);
     if (!deletedTask) {
       return next(new ApiError(404, "Task not found"));
     }
