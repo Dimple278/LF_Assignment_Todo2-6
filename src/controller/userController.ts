@@ -63,6 +63,7 @@ export const createNewUser = async (
 ): Promise<void> => {
   try {
     const { name, email, password } = req.body;
+
     if (userService.fetchUserByEmail(email)) {
       return next(new ApiError(400, "Email already in use"));
     }

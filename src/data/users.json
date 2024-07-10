@@ -28,5 +28,17 @@
     "name": "dimple",
     "email": "dimple@example.com",
     "password": "$2a$10$i04Gz8vOmN52yyhZZ.zpaewga8wIx709iOmjw0/ix9OKqgWx5eo46"
+  },
+  {
+    "id": 6,
+    "name": "nista",
+    "email": "nista@example.com",
+    "password": "$2a$10$tIkCcdnuaNsjtI4F9y70/.7rrMJQ3JsQtvjmyAhgl8THmMsV0bkPC"
+  },
+  {
+    "id": 7,
+    "name": "nista",
+    "email": "pista@example.com",
+    "password": "$2a$10$acAegnfG6IjpfePSRnyXoOVWtpb2.Eh1EIFtvDAutfM5N7QdJMbQC"
   }
 ]

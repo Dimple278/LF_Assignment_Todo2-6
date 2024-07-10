@@ -14,11 +14,11 @@ export const getUserById = (id: number): User => {
   return user;
 };
 
-export const getUserByEmail = (email: string): User => {
+export const getUserByEmail = (email: string): User | undefined => {
   const user = users.find((user) => user.email === email);
-  if (!user) {
-    throw new ApiError(404, `User with email ${email} not found`);
-  }
+  // if (!user) {
+  //   throw new ApiError(404, `User with email ${email} not found`);
+  // }
   return user;
 };
 
