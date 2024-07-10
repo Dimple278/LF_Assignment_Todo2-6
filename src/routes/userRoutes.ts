@@ -11,13 +11,22 @@ import {
   validateLoginBody,
   validateRefreshTokenBody,
 } from "../middleware/validationMiddleware";
-import authenticateJWT from "../middleware/authMIddleware";
+import {
+  authenticateJWT,
+  authorizeSuperAdmin,
+} from "../middleware/authMiddleware";
 
 const router = express.Router();
 
-// router.get("/users", getAllUsers);
-router.get("/users/:id", authenticateJWT, getUser);
-router.post("/users", validateUserBody, createNewUser);
+router.get("/users", authenticateJWT, authorizeSuperAdmin, getAllUsers);
+router.get("/users/:id", authenticateJWT, authorizeSuperAdmin, getUser);
+router.post(
+  "/users",
+  validateUserBody,
+  // authenticateJWT,
+  // authorizeSuperAdmin,
+  createNewUser
+);
 router.post("/users/login", validateLoginBody, loginUser);
 router.post("/users/refresh", validateRefreshTokenBody, refreshToken);
 

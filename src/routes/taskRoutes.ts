@@ -11,7 +11,8 @@ import {
   validatePostTaskBody,
   validatePutTaskBody,
 } from "../middleware/validationMiddleware";
-import authenticateJWT from "../middleware/authMIddleware";
+
+import { authenticateJWT } from "../middleware/authMiddleware";
 
 const router = express.Router();
 

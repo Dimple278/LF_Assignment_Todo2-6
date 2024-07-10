@@ -40,5 +40,26 @@
     "name": "nista",
     "email": "pista@example.com",
     "password": "$2a$10$acAegnfG6IjpfePSRnyXoOVWtpb2.Eh1EIFtvDAutfM5N7QdJMbQC"
+  },
+  {
+    "id": 9,
+    "name": "test",
+    "email": "test@example.com",
+    "password": "$2a$10$yNqJ25U9L47VEm8e8XikFerlfKPcBgTZ9LvJZ1gSr3eczAQjAH21O",
+    "role": ""
+  },
+  {
+    "id": 10,
+    "name": "Super Admin",
+    "email": "superadmin@example.com",
+    "password": "$2a$10$FbqqCyYwa.T.nm1u6By8O.FsYi37bf5lYFNm4SlYoAqN/MKGAoUzC",
+    "role": "superadmin"
+  },
+  {
+    "id": 11,
+    "name": "abc",
+    "email": "abc1@gmail.com",
+    "password": "$2a$10$6Rk1ycmRTDFgwzCScOSLx.bgIUg2RanxsRy04L9lKseitg5ZLGi1S",
+    "role": ""
   }
 ]

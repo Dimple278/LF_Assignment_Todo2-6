@@ -29,6 +29,7 @@ export const createUser = async (
     name,
     email,
     password: hashedPassword,
+    role: "",
   };
   const addedUser = addUser(newUser);
   const { password: _password, ...response } = addedUser;

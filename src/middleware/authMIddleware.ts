@@ -2,6 +2,7 @@ import { Request, Response, NextFunction } from "express";
 import jwt, { JwtPayload } from "jsonwebtoken";
 import config from "../config";
 import ApiError from "../error/apiError";
+import { getUserById } from "../model/userModel";
 
 const { secretKey } = config;
 
@@ -36,4 +37,22 @@ const authenticateJWT = (
   }
 };
 
-export default authenticateJWT;
+const authorizeSuperAdmin = (
+  req: AuthRequest,
+  res: Response,
+  next: NextFunction
+) => {
+  if (!req.user || typeof req.user === "string") {
+    return next(new ApiError(401, "Unauthorized"));
+  }
+
+  const user = getUserById((req.user as JwtPayload).id);
+
+  if (!user || user.role !== "superadmin") {
+    return next(new ApiError(403, "Forbidden"));
+  }
+
+  next();
+};
+
+export { authenticateJWT, authorizeSuperAdmin };
