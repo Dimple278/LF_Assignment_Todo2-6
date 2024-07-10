@@ -1,6 +1,6 @@
 import { User } from "../interface/userInterfaces";
 import { readFromFile, writeToFile } from "../utils/fileUtils";
-import ApiError from "../utils/apiError";
+import ApiError from "../error/apiError";
 
 let users: User[] = readFromFile("users");
 

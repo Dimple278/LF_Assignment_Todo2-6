@@ -13,6 +13,7 @@ app.use(router);
 app.use(userRouter);
 
 app.use(errorMiddleware);
+
 app.listen(config.port, () => {
   console.log(`Server listening at port:${config.port}`);
 });

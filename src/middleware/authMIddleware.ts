@@ -1,7 +1,7 @@
 import { Request, Response, NextFunction } from "express";
 import jwt, { JwtPayload } from "jsonwebtoken";
 import config from "../config";
-import ApiError from "../utils/apiError";
+import ApiError from "../error/apiError";
 
 const { secretKey } = config;
 

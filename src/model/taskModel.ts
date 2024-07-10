@@ -1,6 +1,6 @@
 import { Task } from "../interface/taskInterface";
 import { readFromFile, writeToFile } from "../utils/fileUtils";
-import ApiError from "../utils/apiError";
+import ApiError from "../error/apiError";
 
 let tasks: Task[] = readFromFile("tasks");
 
