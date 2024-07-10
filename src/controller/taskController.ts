@@ -3,6 +3,7 @@ import ApiError from "../error/apiError";
 import * as taskService from "../service/taskService";
 import { Task } from "../interface/taskInterface";
 import { AuthRequest } from "../middleware/authMIddleware";
+import { StatusCodes } from "http-status-codes";
 
 export const getAllTasks = (
   req: AuthRequest,
@@ -11,9 +12,11 @@ export const getAllTasks = (
 ): void => {
   try {
     const tasks = taskService.fetchTasks(req.user!.id);
-    res.json(tasks);
+    res.status(StatusCodes.OK).json(tasks);
   } catch (error) {
-    next(new ApiError(500, "Failed to fetch tasks"));
+    next(
+      new ApiError(StatusCodes.INTERNAL_SERVER_ERROR, "Failed to fetch tasks")
+    );
   }
 };
 
@@ -26,11 +29,13 @@ export const getTask = (
     const taskId = parseInt(req.params.id);
     const task = taskService.fetchTaskById(taskId, req.user!.id);
     if (!task) {
-      return next(new ApiError(404, "Task not found"));
+      return next(new ApiError(StatusCodes.NOT_FOUND, "Task not found"));
     }
-    res.json(task);
+    res.status(StatusCodes.OK).json(task);
   } catch (error) {
-    next(new ApiError(500, "Failed to fetch task"));
+    next(
+      new ApiError(StatusCodes.INTERNAL_SERVER_ERROR, "Failed to fetch task")
+    );
   }
 };
 
@@ -42,9 +47,11 @@ export const createTask = (
   try {
     const { title, completed } = req.body;
     const task = taskService.createTask(title, completed, req.user!.id);
-    res.status(201).json(task);
+    res.status(StatusCodes.CREATED).json(task);
   } catch (error) {
-    next(new ApiError(500, "Failed to create task"));
+    next(
+      new ApiError(StatusCodes.INTERNAL_SERVER_ERROR, "Failed to create task")
+    );
   }
 };
 
@@ -59,11 +66,13 @@ export const updateTask = (
 
     const updatedTask = taskService.modifyTask(taskId, updates, req.user!.id);
     if (!updatedTask) {
-      return next(new ApiError(404, "Task not found"));
+      return next(new ApiError(StatusCodes.NOT_FOUND, "Task not found"));
     }
-    res.json(updatedTask);
+    res.status(StatusCodes.OK).json(updatedTask);
   } catch (error) {
-    next(new ApiError(500, "Failed to update task"));
+    next(
+      new ApiError(StatusCodes.INTERNAL_SERVER_ERROR, "Failed to update task")
+    );
   }
 };
 
@@ -76,10 +85,12 @@ export const deleteTask = (
     const taskId = parseInt(req.params.id);
     const deletedTask = taskService.deleteTask(taskId, req.user!.id);
     if (!deletedTask) {
-      return next(new ApiError(404, "Task not found"));
+      return next(new ApiError(StatusCodes.NOT_FOUND, "Task not found"));
     }
-    res.json(deletedTask);
+    res.status(StatusCodes.OK).json(deletedTask);
   } catch (error) {
-    next(new ApiError(500, "Failed to delete task"));
+    next(
+      new ApiError(StatusCodes.INTERNAL_SERVER_ERROR, "Failed to delete task")
+    );
   }
 };
