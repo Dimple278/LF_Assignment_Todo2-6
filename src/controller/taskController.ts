@@ -34,15 +34,10 @@ export const getTask = (
     const taskId = parseInt(req.params.id);
     logger.info("Fetching task", { userId: req.user!.id, taskId });
     const task = taskService.fetchTaskById(taskId, req.user!.id);
-    if (!task) {
-      return next(new ApiError(StatusCodes.NOT_FOUND, "Task not found"));
-    }
     res.status(StatusCodes.OK).json(task);
   } catch (error) {
     logger.error("Failed to fetch task", { error });
-    next(
-      new ApiError(StatusCodes.INTERNAL_SERVER_ERROR, "Failed to fetch task")
-    );
+    next(error);
   }
 };
 

@@ -23,9 +23,7 @@ export const getUser = (
     res.status(StatusCodes.OK).json(user);
   } catch (error) {
     logger.error("Failed to fetch user", { error });
-    next(
-      new ApiError(StatusCodes.INTERNAL_SERVER_ERROR, "Failed to fetch user")
-    );
+    next(error);
   }
 };
 
@@ -40,9 +38,7 @@ export const getAllUsers = (
     res.status(StatusCodes.OK).json(users);
   } catch (error) {
     logger.error("Failed to fetch users", { error });
-    next(
-      new ApiError(StatusCodes.INTERNAL_SERVER_ERROR, "Failed to fetch users")
-    );
+    next(error);
   }
 };
 
@@ -112,9 +108,7 @@ export const updateUser = async (
     res.status(StatusCodes.OK).json(updatedUser);
   } catch (error) {
     logger.error("Failed to update user", { error });
-    next(
-      new ApiError(StatusCodes.INTERNAL_SERVER_ERROR, "Failed to update user")
-    );
+    next(error);
   }
 };
 
@@ -135,9 +129,7 @@ export const deleteUser = async (
     res.status(StatusCodes.OK).json(deletedUser);
   } catch (error) {
     logger.error("Failed to delete user", { error });
-    next(
-      new ApiError(StatusCodes.INTERNAL_SERVER_ERROR, "Failed to delete user")
-    );
+    next(error);
   }
 };
 
