@@ -1,9 +1,7 @@
 import { Request, Response, NextFunction } from "express";
 import jwt, { JwtPayload } from "jsonwebtoken";
 import config from "../config";
-import ApiError from "../error/apiError";
 import { getUserById } from "../model/userModel";
-import { StatusCodes } from "http-status-codes";
 import UnauthorizedError from "../error/unauthorizedError";
 import ForbiddenError from "../error/forbiddenError";
 

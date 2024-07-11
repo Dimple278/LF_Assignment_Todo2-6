@@ -1,7 +1,7 @@
 import { Request, Response, NextFunction } from "express";
 import ApiError from "../error/apiError";
 import * as userService from "../service/userService";
-import loggerWithNameSpace from "../logger";
+import loggerWithNameSpace from "../utils/logger";
 import { StatusCodes } from "http-status-codes";
 
 const logger = loggerWithNameSpace("UserController");
@@ -14,7 +14,7 @@ export const getUser = (
   try {
     const userId = parseInt(req.params.id);
 
-    logger.info("Called getUser");
+    logger.info("Fetching user", { userId });
 
     const user = userService.fetchUserById(userId);
     if (!user) {
@@ -22,6 +22,7 @@ export const getUser = (
     }
     res.status(StatusCodes.OK).json(user);
   } catch (error) {
+    logger.error("Failed to fetch user", { error });
     next(
       new ApiError(StatusCodes.INTERNAL_SERVER_ERROR, "Failed to fetch user")
     );
@@ -34,9 +35,11 @@ export const getAllUsers = (
   next: NextFunction
 ): void => {
   try {
+    logger.info("Fetching all users");
     const users = userService.fetchUsers();
     res.status(StatusCodes.OK).json(users);
   } catch (error) {
+    logger.error("Failed to fetch users", { error });
     next(
       new ApiError(StatusCodes.INTERNAL_SERVER_ERROR, "Failed to fetch users")
     );
@@ -50,6 +53,7 @@ export const loginUser = async (
 ): Promise<void> => {
   try {
     const { email, password } = req.body;
+    logger.info("User login attempt", { email });
     const user = await userService.validateUserCredentials(email, password);
     if (!user) {
       return next(
@@ -59,6 +63,7 @@ export const loginUser = async (
     const tokens = userService.generateTokens(user);
     res.status(StatusCodes.OK).json(tokens);
   } catch (error) {
+    logger.error("Failed to log in user", { error });
     next(
       new ApiError(StatusCodes.INTERNAL_SERVER_ERROR, "Failed to log in user")
     );
@@ -72,7 +77,7 @@ export const createNewUser = async (
 ): Promise<void> => {
   try {
     const { name, email, password } = req.body;
-
+    logger.info("Creating User");
     if (userService.fetchUserByEmail(email)) {
       return next(
         new ApiError(StatusCodes.BAD_REQUEST, "Email already in use")
@@ -81,6 +86,7 @@ export const createNewUser = async (
     const newUser = await userService.createUser(name, email, password);
     res.status(StatusCodes.CREATED).json(newUser);
   } catch (error) {
+    logger.error("Failed to create user");
     next(
       new ApiError(StatusCodes.INTERNAL_SERVER_ERROR, "Failed to create user")
     );
@@ -95,6 +101,7 @@ export const updateUser = async (
   try {
     const userId = parseInt(req.params.id);
     const updateData = req.body;
+    logger.info("Updating user", { userId, updateData });
 
     const updatedUser = await userService.updateUser(userId, updateData);
     if (!updatedUser) {
@@ -104,6 +111,7 @@ export const updateUser = async (
     }
     res.status(StatusCodes.OK).json(updatedUser);
   } catch (error) {
+    logger.error("Failed to update user", { error });
     next(
       new ApiError(StatusCodes.INTERNAL_SERVER_ERROR, "Failed to update user")
     );
@@ -117,7 +125,7 @@ export const deleteUser = async (
 ): Promise<void> => {
   try {
     const userId = parseInt(req.params.id);
-
+    logger.info("Deleting user", { userId });
     const deletedUser = userService.deleteUser(userId);
     if (!deletedUser) {
       return next(
@@ -126,6 +134,7 @@ export const deleteUser = async (
     }
     res.status(StatusCodes.OK).json(deletedUser);
   } catch (error) {
+    logger.error("Failed to delete user", { error });
     next(
       new ApiError(StatusCodes.INTERNAL_SERVER_ERROR, "Failed to delete user")
     );
@@ -139,6 +148,7 @@ export const refreshToken = (
 ): void => {
   try {
     const { refreshToken } = req.body;
+    logger.info("Refreshing token");
     if (!refreshToken) {
       return next(
         new ApiError(StatusCodes.BAD_REQUEST, "Refresh token is required")
@@ -150,6 +160,7 @@ export const refreshToken = (
     }
     res.status(StatusCodes.OK).json(tokens);
   } catch (error) {
+    logger.error("Failed to refresh access token", { error });
     next(
       new ApiError(
         StatusCodes.INTERNAL_SERVER_ERROR,

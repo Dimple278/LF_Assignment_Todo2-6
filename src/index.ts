@@ -4,10 +4,11 @@ import config from "./config";
 import router from "./routes/taskRoutes";
 import errorMiddleware from "./middleware/errorMiddleware";
 import userRouter from "./routes/userRoutes";
+import { requestLogger } from "./middleware/logger";
 
 const app = express();
 app.use(express.json());
-
+app.use(requestLogger);
 app.use(bodyParser.json());
 app.use(router);
 app.use(userRouter);
