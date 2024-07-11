@@ -3,6 +3,9 @@ import jwt, { JwtPayload } from "jsonwebtoken";
 import config from "../config";
 import ApiError from "../error/apiError";
 import { getUserById } from "../model/userModel";
+import { StatusCodes } from "http-status-codes";
+import UnauthorizedError from "../error/unauthorizedError";
+import ForbiddenError from "../error/forbiddenError";
 
 const { secretKey } = config;
 
@@ -21,20 +24,20 @@ const authenticateJWT = (
 ): void => {
   const authHeader = req.headers.authorization;
 
-  if (authHeader) {
-    const token = authHeader.split(" ")[1];
-
-    jwt.verify(token, secretKey, (err, user) => {
-      if (err) {
-        return next(new ApiError(403, "Forbidden: Invalid token"));
-      }
-
-      req.user = user as JwtPayload & { id: number; email: string };
-      next();
-    });
-  } else {
-    next(new ApiError(401, "Unauthorized: No token provided"));
+  if (!authHeader) {
+    return next(new UnauthorizedError("No token provided"));
   }
+
+  const token = authHeader.split(" ")[1];
+
+  jwt.verify(token, secretKey, (err, user) => {
+    if (err) {
+      return next(new ForbiddenError("Invalid token"));
+    }
+
+    req.user = user as JwtPayload & { id: number; email: string };
+    next();
+  });
 };
 
 const authorizeSuperAdmin = (
@@ -43,13 +46,13 @@ const authorizeSuperAdmin = (
   next: NextFunction
 ) => {
   if (!req.user) {
-    return next(new ApiError(401, "Unauthorized"));
+    return next(new UnauthorizedError());
   }
 
   const user = getUserById(req.user.id);
 
   if (user.role !== "superadmin") {
-    return next(new ApiError(403, "Forbidden"));
+    return next(new ForbiddenError());
   }
 
   next();

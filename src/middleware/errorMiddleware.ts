@@ -1,22 +1,22 @@
 import { Request, Response, NextFunction } from "express";
 import ApiError from "../error/apiError";
-import loggerWithNameSpace from "../logger";
-
-const logger = loggerWithNameSpace("ErrorHandler");
+import { StatusCodes } from "http-status-codes";
 
 const errorMiddleware = (
-  err: ApiError,
+  err: ApiError | Error,
   req: Request,
   res: Response,
   next: NextFunction
 ) => {
-  if (err.stack) {
-    logger.error(err.stack);
+  console.error(err);
+
+  if (err instanceof ApiError) {
+    return res.status(err.statusCode).json({ error: err.message });
   }
 
-  const statusCode = err.statusCode || 500;
-  const message = err.message || "Internal Server Error";
-  res.status(statusCode).json({ message });
+  res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
+    error: "Something went wrong",
+  });
 };
 
 export default errorMiddleware;
