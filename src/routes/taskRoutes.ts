@@ -1,30 +1,44 @@
 import express from "express";
+import * as taskController from "../controller/taskController";
 import {
-  getAllTasks,
-  getTask,
-  createTask,
-  updateTask,
-  deleteTask,
-} from "../controller/taskController";
-import {
-  validateTaskId,
-  validatePostTaskBody,
-  validatePutTaskBody,
+  validateReqBody,
+  validateReqParams,
 } from "../middleware/validationMiddleware";
+import {
+  taskIdParamSchema,
+  createTaskBodySchema,
+  updateTaskBodySchema,
+} from "../schema/taskSchema";
+
 import { authenticateJWT } from "../middleware/authMIddleware";
 
 const router = express.Router();
 
-router.get("/tasks", authenticateJWT, getAllTasks);
-router.get("/tasks/:id", authenticateJWT, validateTaskId, getTask);
-router.post("/tasks", authenticateJWT, validatePostTaskBody, createTask);
+router.get("/tasks", authenticateJWT, taskController.getAllTasks);
+router.post(
+  "/tasks",
+  authenticateJWT,
+  validateReqBody(createTaskBodySchema),
+  taskController.createTask
+);
+router.get(
+  "/tasks/:id",
+  authenticateJWT,
+  validateReqParams(taskIdParamSchema),
+  taskController.getTask
+);
 router.put(
   "/tasks/:id",
   authenticateJWT,
-  validateTaskId,
-  validatePutTaskBody,
-  updateTask
+  validateReqParams(taskIdParamSchema),
+  validateReqBody(updateTaskBodySchema),
+  taskController.updateTask
 );
-router.delete("/tasks/:id", authenticateJWT, validateTaskId, deleteTask);
+router.delete(
+  "/tasks/:id",
+  authenticateJWT,
+  validateReqParams(taskIdParamSchema),
+  taskController.deleteTask
+);
 
 export default router;
