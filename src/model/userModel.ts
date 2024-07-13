@@ -2,6 +2,7 @@ import { User } from "../interface/userInterfaces";
 import { readFromFile, writeToFile } from "../utils/fileUtils";
 import ApiError from "../error/apiError";
 import bcrypt from "bcryptjs";
+import notFoundError from "../error/notFoundError";
 
 let users: User[] = readFromFile("users");
 
@@ -64,9 +65,8 @@ export const updateUser = (
 export const deleteUser = (id: number): User | null => {
   const index = users.findIndex((user) => user.id === id);
   if (index === -1) {
-    throw new ApiError(404, `User with ID ${id} not found`);
+    throw new notFoundError(`User with ID ${id} not found`);
   }
-
   const [deletedUser] = users.splice(index, 1);
   writeToFile("users", users);
   return deletedUser;
