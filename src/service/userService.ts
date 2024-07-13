@@ -10,8 +10,6 @@ import {
   deleteUser as deleteUserModel,
   generateNextUserId,
 } from "../model/userModel";
-import ApiError from "../error/apiError";
-import { StatusCodes } from "http-status-codes";
 import { BadRequestError } from "../error/badRequestError";
 import notFoundError from "../error/notFoundError";
 
