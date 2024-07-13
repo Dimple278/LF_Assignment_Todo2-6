@@ -14,6 +14,7 @@ export const generateNextUserId = (): number => {
     users.length > 0 ? Math.max(...users.map((user) => user.id)) : 0;
   return maxId + 1;
 };
+
 if (!users.find((user) => user.email === superAdminEmail)) {
   const superAdmin: User = {
     id: generateNextUserId(),
