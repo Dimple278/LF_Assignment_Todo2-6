@@ -8,10 +8,8 @@ const errorMiddleware = (
   res: Response,
   next: NextFunction
 ) => {
-  console.error(err);
-
-  if (err instanceof ApiError) {
-    return res.status(err.statusCode).json({ error: err.message });
+  if (err instanceof Error) {
+    return res.status(StatusCodes.BAD_REQUEST).json({ error: err.message });
   }
 
   res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
