@@ -3,7 +3,7 @@ import ApiError from "../error/apiError";
 import logger from "../utils/logger";
 
 // Error handler middleware
-export default function errorMiddlewarer(
+export default function errorMiddleware(
   err: ApiError,
   req: Request,
   res: Response,
