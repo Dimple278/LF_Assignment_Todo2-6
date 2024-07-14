@@ -6,16 +6,15 @@ import notFoundError from "../error/notFoundError";
 
 let users: User[] = readFromFile("users");
 
-// Check if super admin exists, if not, add one
-const superAdminEmail = "superadmin@example.com";
-const superAdminPassword = bcrypt.hashSync("superadminpassword", 10);
-
 export const generateNextUserId = (): number => {
   const maxId =
     users.length > 0 ? Math.max(...users.map((user) => user.id)) : 0;
   return maxId + 1;
 };
 
+// Check if super admin exists, if not, add one
+const superAdminEmail = "superadmin@example.com";
+const superAdminPassword = bcrypt.hashSync("superadminpassword", 10);
 if (!users.find((user) => user.email === superAdminEmail)) {
   const superAdmin: User = {
     id: generateNextUserId(),
@@ -43,9 +42,6 @@ export const getUserByEmail = (email: string): User | undefined => {
 };
 
 export const addUser = (user: User): User => {
-  if (users.some((existingUser) => existingUser.email === user.email)) {
-    throw new ApiError(400, `User with email ${user.email} already exists`);
-  }
   user.id = generateNextUserId();
   users.push(user);
   writeToFile("users", users);
@@ -62,7 +58,7 @@ export const updateUser = (
   return user;
 };
 
-export const deleteUser = (id: number): User | null => {
+export const deleteUser = (id: number): User => {
   const index = users.findIndex((user) => user.id === id);
   if (index === -1) {
     throw new notFoundError(`User with ID ${id} not found`);
