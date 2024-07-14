@@ -5,8 +5,8 @@ import { getUserById } from "../model/userModel";
 import UnauthorizedError from "../error/unauthorizedError";
 import ForbiddenError from "../error/forbiddenError";
 
-const { secretKey } = config;
-
+// const { secretKey } = config;
+const secretKey = config.jwt.secret;
 if (!secretKey) {
   throw new Error("Secret key is not defined");
 }
