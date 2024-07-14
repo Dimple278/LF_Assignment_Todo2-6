@@ -1,3 +1,4 @@
+import notFoundError from "../error/notFoundError";
 import { Task } from "../interface/taskInterface";
 import {
   getAllTasks,
@@ -10,8 +11,13 @@ import {
 
 export const fetchTasks = (userId: number): Task[] => getAllTasks(userId);
 
-export const fetchTaskById = (id: number, userId: number): Task | null =>
-  getTaskById(id, userId);
+export const fetchTaskById = (id: number, userId: number): Task | null => {
+  let task = getTaskById(id, userId);
+  if (!task) {
+    throw new notFoundError(`Task with ID ${id} not found`);
+  }
+  return task;
+};
 
 export const createTask = (
   title: string,
@@ -33,7 +39,9 @@ export const modifyTask = (
   userId: number
 ): Task | null => {
   const task = getTaskById(id, userId);
-  if (!task) return null;
+  if (!task) {
+    throw new notFoundError(`Task with ${id} not found`);
+  }
 
   Object.keys(updates).forEach((key) => {
     const prop = key as keyof Pick<Task, "title" | "completed">;
@@ -45,5 +53,10 @@ export const modifyTask = (
   return updateTask(task);
 };
 
-export const deleteTask = (id: number, userId: number): Task | null =>
-  removeTask(id, userId);
+export const deleteTask = (id: number, userId: number): Task | null => {
+  const task = removeTask(id, userId);
+  if (!task) {
+    throw new notFoundError(`Task with ID ${id} not found`);
+  }
+  return task;
+};
