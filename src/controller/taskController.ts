@@ -1,5 +1,4 @@
 import { Response, NextFunction } from "express";
-import ApiError from "../error/apiError";
 import * as taskService from "../service/taskService";
 import { Task } from "../interface/taskInterface";
 import { AuthRequest } from "../middleware/authMIddleware";
@@ -15,13 +14,13 @@ export const getAllTasks = (
 ): void => {
   try {
     logger.info("Fetching all tasks", { userId: req.user!.id });
+
     const tasks = taskService.fetchTasks(req.user!.id);
+
     res.status(StatusCodes.OK).json(tasks);
   } catch (error) {
     logger.error("Failed to fetch tasks", { error });
-    next(
-      new ApiError(StatusCodes.INTERNAL_SERVER_ERROR, "Failed to fetch tasks")
-    );
+    next(error);
   }
 };
 
@@ -53,9 +52,7 @@ export const createTask = (
     res.status(StatusCodes.CREATED).json(task);
   } catch (error) {
     logger.error("Failed to create task", { error });
-    next(
-      new ApiError(StatusCodes.INTERNAL_SERVER_ERROR, "Failed to create task")
-    );
+    next(error);
   }
 };
 
@@ -69,15 +66,10 @@ export const updateTask = (
     const updates: Partial<Pick<Task, "title" | "completed">> = req.body;
     logger.info("Updating task", { userId: req.user!.id, taskId, updates });
     const updatedTask = taskService.modifyTask(taskId, updates, req.user!.id);
-    if (!updatedTask) {
-      return next(new ApiError(StatusCodes.NOT_FOUND, "Task not found"));
-    }
     res.status(StatusCodes.OK).json(updatedTask);
   } catch (error) {
     logger.error("Failed to update task", { error });
-    next(
-      new ApiError(StatusCodes.INTERNAL_SERVER_ERROR, "Failed to update task")
-    );
+    next(error);
   }
 };
 
@@ -90,14 +82,9 @@ export const deleteTask = (
     const taskId = parseInt(req.params.id);
     logger.info("Deleting task", { userId: req.user!.id, taskId });
     const deletedTask = taskService.deleteTask(taskId, req.user!.id);
-    if (!deletedTask) {
-      return next(new ApiError(StatusCodes.NOT_FOUND, "Task not found"));
-    }
     res.status(StatusCodes.OK).json(deletedTask);
   } catch (error) {
     logger.error("Failed to delete task", { error });
-    next(
-      new ApiError(StatusCodes.INTERNAL_SERVER_ERROR, "Failed to delete task")
-    );
+    next(error);
   }
 };
