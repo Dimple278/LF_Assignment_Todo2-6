@@ -15,3 +15,5 @@ authRouter.post(
   validateReqBody(refreshTokenBodySchema),
   refreshToken
 );
+
+export default authRouter;
