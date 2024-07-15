@@ -10,7 +10,7 @@ import {
   deleteUser as deleteUserModel,
   generateNextUserId,
 } from "../model/userModel";
-import { BadRequestError } from "../error/badRequestError";
+import BadRequestError from "../error/badRequestError";
 import notFoundError from "../error/notFoundError";
 
 export const fetchUsers = (): User[] => getAllUsers();

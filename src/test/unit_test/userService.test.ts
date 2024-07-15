@@ -1,219 +1,229 @@
 import expect from "expect";
 import sinon from "sinon";
 import bcrypt from "bcryptjs";
-
 import * as UserModel from "../../model/userModel";
 import NotFoundError from "../../error/notFoundError";
+import BadRequestError from "../../error/badRequestError";
 import {
+  fetchUsers,
+  fetchUserById,
+  fetchUserByEmail,
   createUser,
-  deleteUsers,
-  getUsers,
-  updateUsers,
+  updateUser,
+  deleteUser,
 } from "../../service/userService";
 import { describe } from "mocha";
-// import { Roles } from "../../../constants/Roles";
 
 // test cases for user service
 describe("User Service", () => {
-  // test cases for createUser
-  describe("createUser", () => {
-    let bcryptHashStub: sinon.SinonStub;
-    let userModelCreateUserStub: sinon.SinonStub;
+  // test cases for fetchUsers
+  describe("fetchUsers", () => {
+    let userModelStub;
 
     beforeEach(() => {
-      bcryptHashStub = sinon.stub(bcrypt, "hash");
-      userModelCreateUserStub = sinon.stub(UserModel, "createUser");
+      userModelStub = sinon.stub(UserModel, "getAllUsers");
     });
 
     afterEach(() => {
-      bcryptHashStub.restore();
-      userModelCreateUserStub.restore();
+      userModelStub.restore();
     });
 
-    it("should create user", async () => {
-      bcryptHashStub.resolves("hashedPassword");
-      const user = {
-        id: "1",
-        name: "test",
-        email: "test@test.com",
-        password: "password123",
-        role: Roles.USER,
-        permissions: [],
-      };
+    it("should fetch all users", () => {
+      const users = [{ id: 1, name: "John Doe", email: "john@example.com" }];
+      userModelStub.returns(users);
 
-      await createUser(user);
-
-      expect(bcryptHashStub.callCount).toBe(1);
-      expect(bcryptHashStub.getCall(0).args).toStrictEqual([user.password, 10]);
-
-      expect(userModelCreateUserStub.callCount).toBe(1);
-      expect(userModelCreateUserStub.getCall(0).args).toStrictEqual([
-        { ...user, password: "hashedPassword" },
-      ]);
-    });
-  });
-
-  // test cases for getUsers
-  describe("getUsers", () => {
-    let userModelGetUsersStub: sinon.SinonStub;
-
-    beforeEach(() => {
-      userModelGetUsersStub = sinon.stub(UserModel, "getUsers");
-    });
-
-    afterEach(() => {
-      userModelGetUsersStub.restore();
-    });
-
-    it("should get users", () => {
-      const query = { q: "test" };
-      const users = [{ name: "test", email: "test@test.com" }];
-
-      userModelGetUsersStub.returns(users);
-
-      const result = getUsers(query);
-
-      expect(userModelGetUsersStub.callCount).toBe(1);
-      expect(userModelGetUsersStub.getCall(0).args).toStrictEqual([query]);
+      const result = fetchUsers();
+      expect(userModelStub.calledOnce).toBe(true);
       expect(result).toStrictEqual(users);
     });
-
-    it("should throw NotFoundError if no users found", () => {
-      const query = { q: "nonexistent" };
-
-      userModelGetUsersStub.returns(null);
-
-      expect(() => getUsers(query)).toThrow(
-        new NotFoundError("No users found")
-      );
-      expect(userModelGetUsersStub.callCount).toBe(1);
-      expect(userModelGetUsersStub.getCall(0).args).toStrictEqual([query]);
-    });
   });
 
-  // test cases for updateUsers
-  describe("updateUsers", () => {
-    let userModelFindUserIndexByIdStub: sinon.SinonStub;
-    let userModelUpdateUserStub: sinon.SinonStub;
-    let bcryptHashStub: sinon.SinonStub;
+  // test cases for fetchUserById
+  describe("fetchUserById", () => {
+    let userModelStub;
 
     beforeEach(() => {
-      userModelFindUserIndexByIdStub = sinon.stub(
-        UserModel,
-        "findUserIndexById"
-      );
-      userModelUpdateUserStub = sinon.stub(UserModel, "updateUser");
-      bcryptHashStub = sinon.stub(bcrypt, "hash");
+      userModelStub = sinon.stub(UserModel, "getUserById");
     });
 
     afterEach(() => {
-      userModelFindUserIndexByIdStub.restore();
-      userModelUpdateUserStub.restore();
-      bcryptHashStub.restore();
+      userModelStub.restore();
     });
 
-    it("should update user", async () => {
-      const id = 1;
+    it("should fetch user by ID", () => {
+      const user = { id: 1, name: "John Doe", email: "john@example.com" };
+      userModelStub.withArgs(1).returns(user);
+
+      const result = fetchUserById(1);
+      expect(userModelStub.calledOnce).toBe(true);
+      expect(result).toStrictEqual(user);
+    });
+
+    it("should return undefined if user not found", () => {
+      userModelStub.withArgs(1).returns(undefined);
+
+      const result = fetchUserById(1);
+      expect(userModelStub.calledOnce).toBe(true);
+      expect(result).toBeUndefined();
+    });
+  });
+
+  // test cases for fetchUserByEmail
+  describe("fetchUserByEmail", () => {
+    let userModelStub;
+
+    beforeEach(() => {
+      userModelStub = sinon.stub(UserModel, "getUserByEmail");
+    });
+
+    afterEach(() => {
+      userModelStub.restore();
+    });
+
+    it("should fetch user by email", () => {
+      const user = { id: 1, name: "John Doe", email: "john@example.com" };
+      userModelStub.withArgs("john@example.com").returns(user);
+
+      const result = fetchUserByEmail("john@example.com");
+      expect(userModelStub.calledOnce).toBe(true);
+      expect(result).toStrictEqual(user);
+    });
+
+    it("should return undefined if user not found", () => {
+      userModelStub.withArgs("john@example.com").returns(undefined);
+
+      const result = fetchUserByEmail("john@example.com");
+      expect(userModelStub.calledOnce).toBe(true);
+      expect(result).toBeUndefined();
+    });
+  });
+
+  // test cases for createUser
+  describe("createUser", () => {
+    let bcryptStub, userModelStub;
+
+    beforeEach(() => {
+      bcryptStub = sinon.stub(bcrypt, "hash");
+      userModelStub = sinon.stub(UserModel, "addUser");
+    });
+
+    afterEach(() => {
+      bcryptStub.restore();
+      userModelStub.restore();
+    });
+
+    it("should create a user", async () => {
       const user = {
-        name: "updated",
-        password: "newpassword",
-        role: Roles.USER,
-        permissions: [],
-        email: "update@update.com",
-        id: "1",
+        id: 1,
+        name: "John Doe",
+        email: "john@example.com",
+        password: "hashedPassword",
+        role: "user",
       };
-      const userIndex = 0;
 
-      userModelFindUserIndexByIdStub.returns(userIndex);
-      bcryptHashStub.resolves("hashedPassword");
+      bcryptStub.withArgs("password123", 10).resolves("hashedPassword");
+      userModelStub.returns(user);
 
-      await updateUsers(id, user);
+      const result = await createUser(
+        "John Doe",
+        "john@example.com",
+        "password123"
+      );
 
-      expect(userModelFindUserIndexByIdStub.callCount).toBe(1);
-      expect(userModelFindUserIndexByIdStub.getCall(0).args).toStrictEqual([
-        id,
-      ]);
-      expect(bcryptHashStub.callCount).toBe(1);
-      expect(bcryptHashStub.getCall(0).args).toStrictEqual([user.password, 10]);
-      expect(userModelUpdateUserStub.callCount).toBe(1);
-      expect(userModelUpdateUserStub.getCall(0).args).toStrictEqual([
-        id,
-        { ...user, password: "hashedPassword" },
-        userIndex,
-      ]);
+      expect(bcryptStub.calledOnce).toBe(true);
+      expect(userModelStub.calledOnce).toBe(true);
+      expect(result).toStrictEqual({
+        id: 1,
+        name: "John Doe",
+        email: "john@example.com",
+        role: "user",
+      });
+    });
+
+    it("should throw BadRequestError if email is already in use", async () => {
+      sinon
+        .stub(UserModel, "getUserByEmail")
+        .withArgs("john@example.com")
+        .returns({
+          id: 1,
+          name: "John Doe",
+          email: "john@example.com",
+          password: "hashedPassword",
+          role: "user",
+        });
+
+      await expect(
+        createUser("John Doe", "john@example.com", "password123")
+      ).rejects.toThrow(new BadRequestError("Email already in use"));
+    });
+  });
+
+  // test cases for updateUser
+  describe("updateUser", () => {
+    let userModelStub;
+
+    beforeEach(() => {
+      userModelStub = sinon.stub(UserModel, "updateUser");
+    });
+
+    afterEach(() => {
+      userModelStub.restore();
+    });
+
+    it("should update a user", async () => {
+      const user = { id: 1, name: "John Doe", email: "john@example.com" };
+      userModelStub.withArgs(1, { name: "Jane Doe" }).returns({
+        ...user,
+        name: "Jane Doe",
+      });
+
+      const result = await updateUser(1, { name: "Jane Doe" });
+
+      expect(userModelStub.calledOnce).toBe(true);
+      expect(result).toStrictEqual({
+        id: 1,
+        name: "Jane Doe",
+        email: "john@example.com",
+      });
     });
 
     it("should throw NotFoundError if user not found", async () => {
-      const id = 1;
-      const user = {
-        name: "updated",
-        password: "newpassword",
-        role: Roles.USER,
-        permissions: [],
-        email: "update@update.com",
-        id: "1",
-      };
+      userModelStub.withArgs(1, { name: "Jane Doe" }).returns(null);
 
-      userModelFindUserIndexByIdStub.returns(-1);
-
-      await expect(updateUsers(id, user)).rejects.toThrow(
-        new NotFoundError("users not found")
+      await expect(updateUser(1, { name: "Jane Doe" })).rejects.toThrow(
+        new NotFoundError(`User with ID 1 not found`)
       );
-      expect(userModelFindUserIndexByIdStub.callCount).toBe(1);
-      expect(userModelFindUserIndexByIdStub.getCall(0).args).toStrictEqual([
-        id,
-      ]);
     });
   });
 
-  // test cases for deleteUsers
-  describe("deleteUsers", () => {
-    let userModelFindUserIndexByIdStub: sinon.SinonStub;
-    let userModelDeleteUserStub: sinon.SinonStub;
+  // test cases for deleteUser
+  describe("deleteUser", () => {
+    let userModelStub;
 
     beforeEach(() => {
-      userModelFindUserIndexByIdStub = sinon.stub(
-        UserModel,
-        "findUserIndexById"
-      );
-      userModelDeleteUserStub = sinon.stub(UserModel, "deleteUser");
+      userModelStub = sinon.stub(UserModel, "deleteUser");
     });
 
     afterEach(() => {
-      userModelFindUserIndexByIdStub.restore();
-      userModelDeleteUserStub.restore();
+      userModelStub.restore();
     });
 
-    it("should delete user", () => {
-      const id = 1;
-      const userIndex = 0;
+    it("should delete a user", () => {
+      const user = { id: 1, name: "John Doe", email: "john@example.com" };
+      userModelStub.withArgs(1).returns(user);
 
-      userModelFindUserIndexByIdStub.returns(userIndex);
+      const result = deleteUser(1);
 
-      deleteUsers(id);
-
-      expect(userModelFindUserIndexByIdStub.callCount).toBe(1);
-      expect(userModelFindUserIndexByIdStub.getCall(0).args).toStrictEqual([
-        id,
-      ]);
-      expect(userModelDeleteUserStub.callCount).toBe(1);
-      expect(userModelDeleteUserStub.getCall(0).args).toStrictEqual([
-        userIndex,
-      ]);
+      expect(userModelStub.calledOnce).toBe(true);
+      expect(result).toStrictEqual(user);
     });
 
     it("should throw NotFoundError if user not found", () => {
-      const id = 1;
+      userModelStub.withArgs(1).returns(null);
 
-      userModelFindUserIndexByIdStub.returns(-1);
-
-      expect(() => deleteUsers(id)).toThrow(
-        new NotFoundError("users not found")
+      expect(() => deleteUser(1)).toThrow(
+        new NotFoundError(`User with ID 1 not found`)
       );
-      expect(userModelFindUserIndexByIdStub.callCount).toBe(1);
-      expect(userModelFindUserIndexByIdStub.getCall(0).args).toStrictEqual([
-        id,
-      ]);
     });
   });
 });
