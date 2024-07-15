@@ -21,6 +21,7 @@
     "@types/typescript": "^2.0.0",
     "@types/winston": "^2.4.4",
     "expect": "^29.7.0",
+    "mocha": "^10.6.0",
     "sinon": "^18.0.0",
     "ts-node": "^10.9.2",
     "typescript": "^5.5.3",
@@ -41,7 +42,7 @@
     "joi": "^17.13.3",
     "jsonwebtoken": "^9.0.2",
     "lodash": "^4.17.21",
-    "mocha": "^10.6.0",
-    "nodemon": "^3.1.4"
+    "nodemon": "^3.1.4",
+    "supertest": "^7.0.0"
   }
 }
