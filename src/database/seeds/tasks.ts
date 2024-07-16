@@ -1,9 +1,9 @@
 import { Knex } from "knex";
 
-const TABLE_NAME = "users";
+const TABLE_NAME = "tasks";
 
 /**
- * Delete existing entries and seed values for table TABLE_NAME.
+ * Delete existing entries and seed values for table tasks.
  *
  * @param   {Knex} knex
  * @returns {Promise}
@@ -14,9 +14,9 @@ export function seed(knex: Knex): Promise<void> {
     .then(() => {
       return knex(TABLE_NAME).insert([
         {
-          name: "user seed",
-          email: "userSeed@gmail.com",
-          password: "seedpassword@123",
+          title: "task",
+          completed: true,
+          user_id: "3",
         },
       ]);
     });

@@ -3,8 +3,20 @@ import { readFromFile, writeToFile } from "../utils/fileUtils";
 import ApiError from "../error/apiError";
 import bcrypt from "bcryptjs";
 import notFoundError from "../error/notFoundError";
+// import {BaseModel} from "./base"
 
 let users: User[] = readFromFile("users");
+
+// class UserModel extends BaseModel{
+//   static async create (user:User){
+//     const userToCreate{
+//       name:user.name,
+//       email:user.email,
+//       password:user.password
+//     }
+//     await this.queryBuilder().insert(userToCreate).info("users")
+//   }
+// }
 
 export const generateNextUserId = (): number => {
   const maxId =
