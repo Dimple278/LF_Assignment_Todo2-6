@@ -16,7 +16,7 @@ const taskRoutes = express.Router();
 
 taskRoutes.get("/", authenticateJWT, taskController.getAllTasks);
 taskRoutes.post(
-  "/tasks",
+  "/",
   authenticateJWT,
   validateReqBody(createTaskBodySchema),
   taskController.createTask

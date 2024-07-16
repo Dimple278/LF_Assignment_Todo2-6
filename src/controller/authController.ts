@@ -3,7 +3,7 @@ import ApiError from "../error/apiError";
 import * as authService from "../service/authService";
 import loggerWithNameSpace from "../utils/logger";
 import { StatusCodes } from "http-status-codes";
-import { BadRequestError } from "../error/badRequestError";
+import BadRequestError from "../error/badRequestError";
 import internalServerError from "../error/internalServerError";
 import UnauthorizedError from "../error/unauthorizedError";
 import ForbiddenError from "../error/forbiddenError";

@@ -55,5 +55,12 @@
     "email": "superadmin@example.com",
     "password": "$2a$10$n18cVC7A6j19SSYbcjSPOeZ99KfFquwkuMe4t9CkdVwcpHmAZl/Sm",
     "role": "superadmin"
+  },
+  {
+    "id": 13,
+    "name": "simple",
+    "email": "simple@gmail.com",
+    "password": "$2a$10$7MQddd7nHxy8C8QLUpkXA.3cNusT15A9PgwVZtB/KII8GN66ObL0u",
+    "role": "user"
   }
 ]
