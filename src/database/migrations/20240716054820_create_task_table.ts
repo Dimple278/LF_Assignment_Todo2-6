@@ -11,15 +11,22 @@ const TABLE_NAME = "tasks";
 export async function up(knex: Knex): Promise<void> {
   return knex.schema.createTable(TABLE_NAME, (table) => {
     table.bigIncrements();
-    table.string("title", 100).notNullable();
-    table.boolean("completed").nullable();
+
+    table.string("title").notNullable();
+
     table
       .bigInteger("user_id")
       .unsigned()
       .notNullable()
       .references("id")
-      .inTable("users")
-      .onDelete("CASCADE");
+      .inTable("users");
+
+    table
+      .bigInteger("status_id")
+      .unsigned()
+      .notNullable()
+      .references("id")
+      .inTable("tasks_status");
 
     table.timestamp("created_at").notNullable().defaultTo(knex.raw("now()"));
 
@@ -42,7 +49,7 @@ export async function up(knex: Knex): Promise<void> {
 }
 
 /**
- * Drop table TABLE_NAME.
+ * Drop table tasks.
  *
  * @param   {Knex} knex
  * @returns {Promise}
