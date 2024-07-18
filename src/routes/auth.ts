@@ -1,19 +1,10 @@
 import express from "express";
-import { loginUser, refreshToken } from "../controller/authController";
-import { validateReqBody } from "../middleware/validationMiddleware";
+import { login } from "../controller/auth";
+import { refresh } from "../controller/auth";
 
-import {
-  loginUserBodySchema,
-  refreshTokenBodySchema,
-} from "../schema/userSchema";
+const router = express.Router();
 
-const authRouter = express.Router();
+router.post("/login", login);
+router.post("/refresh", refresh);
 
-authRouter.post("/login", validateReqBody(loginUserBodySchema), loginUser);
-authRouter.post(
-  "/refresh-token",
-  validateReqBody(refreshTokenBodySchema),
-  refreshToken
-);
-
-export default authRouter;
+export default router;
