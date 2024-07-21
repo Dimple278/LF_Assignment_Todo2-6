@@ -1,57 +1,53 @@
 import express from "express";
-
 import {
-  getUser,
-  getAllUsers,
-  createNewUser,
-  updateUser,
-  deleteUser,
-} from "../controller/userController";
-
+  createUser,
+  getUsers,
+  updateUsers,
+  deleteUsers,
+} from "../controller/user";
+import { authenticate, authorize } from "../middleware/auth";
 import {
-  validateReqParams,
   validateReqBody,
+  validateReqParams,
+  validateReqQuery,
 } from "../middleware/validationMiddleware";
-
-import { createUserBodySchema, userIdParamSchema } from "../schema/userSchema";
 import {
-  authenticateJWT,
-  authorizeSuperAdmin,
-} from "../middleware/authMIddleware";
+  createUserBodySchema,
+  getUserQuerySchema,
+  updateUserBodySchema,
+  userIdSchema,
+} from "../schema/user";
 
 const userRoutes = express.Router();
 
 userRoutes.get(
-  "/:id",
-  authenticateJWT,
-  authorizeSuperAdmin,
-  validateReqParams(userIdParamSchema),
-  getUser
+  "/",
+  authenticate,
+  authorize("users.get"),
+  validateReqQuery(getUserQuerySchema),
+  getUsers
 );
-// userRoutes.get("/", getAllUsers);
-
 userRoutes.post(
   "/",
-  authenticateJWT,
-  authorizeSuperAdmin,
+  authenticate,
+  authorize("users.post"),
   validateReqBody(createUserBodySchema),
-  createNewUser
+  createUser
 );
-
 userRoutes.put(
   "/:id",
-  authenticateJWT,
-  authorizeSuperAdmin,
-  validateReqParams(userIdParamSchema),
-  validateReqBody(createUserBodySchema),
-  updateUser
+  authenticate,
+  authorize("users.put"),
+  validateReqParams(userIdSchema),
+  validateReqBody(updateUserBodySchema),
+  updateUsers
 );
 userRoutes.delete(
   "/:id",
-  authenticateJWT,
-  authorizeSuperAdmin,
-  validateReqParams(userIdParamSchema),
-  deleteUser
+  authenticate,
+  authorize("users.delete"),
+  validateReqParams(userIdSchema),
+  deleteUsers
 );
 
 export default userRoutes;

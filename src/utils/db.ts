@@ -1,18 +1,24 @@
-import toSnakeCase from "to-snake-case";
-import { baseKnexConfig } from "../knexfile";
+
 import knex, { Knex } from "knex";
+import { baseKnexConfig } from "../knexfile";
+import toSnakeCase from "to-snake-case";
 import camelize from "camelize";
-const KnexConfig: Knex.Config = {
+
+const knexConfig: Knex.Config = {
   ...baseKnexConfig,
-  wrapIdentifier: (value, originalImpl) => {
-    if (value == "*") {
-      return originalImpl(value);
+  wrapIdentifier: (value, origImpl) => {
+    if (value === "*") {
+      return origImpl(value);
     }
-    return originalImpl(toSnakeCase(value));
+
+    return origImpl(toSnakeCase(value));
   },
-  //what to do after the response is received
+
   postProcessResponse: (result) => {
     return camelize(result);
   },
 };
-export default knex(KnexConfig);
+
+
+export default knex(knexConfig);
+

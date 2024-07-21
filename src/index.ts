@@ -1,7 +1,7 @@
 import express from "express";
 import config from "./config";
 import router from "./routes";
-import errorMiddleware from "./middleware/errorMiddleware";
+import { errorHandler } from "./middleware/ErrroHandler";
 import { requestLogger } from "./middleware/logger";
 import helmet from "helmet";
 import rateLimit from "express-rate-limit";
@@ -12,7 +12,7 @@ const port = config.port;
 
 const limiter = rateLimit({
   windowMs: 60 * 1000,
-  limit: 10,
+  limit: 100,
   message: "Too many requests",
 });
 
@@ -48,7 +48,7 @@ app.use(requestLogger);
 app.use(router);
 
 // Error handling middleware
-app.use(errorMiddleware);
+app.use(errorHandler);
 
 app.listen(port, () => {
   console.log(`Server is running on port ${port}`);
