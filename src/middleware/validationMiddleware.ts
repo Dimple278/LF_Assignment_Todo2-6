@@ -1,25 +1,55 @@
-import { NextFunction, Request, Response } from "express";
 import { Schema } from "joi";
-import ApiError from "../error/apiError";
+import { NextFunction, Request, Response } from "express";
+import BadRequestError from "../error/badRequestError";
 
-export function validateReqParams(schema: Schema) {
+import loggerWithNameSpace from "../utils/logger";
+
+const logger = loggerWithNameSpace("ValidatorMiddleware");
+
+// function to validate request query
+export function validateReqQuery(schema: Schema) {
   return (req: Request, res: Response, next: NextFunction) => {
-    const { error, value } = schema.validate(req.params);
+    logger.info("Validating query params");
+    const { error, value } = schema.validate(req.query);
+
     if (error) {
-      return next(new ApiError(400, error.message));
+      logger.error("Error validating query params", { error });
+      next(new BadRequestError(error.message));
     }
-    req.params = value;
+
+    req.query = value;
     next();
   };
 }
 
+// function to validate request body
 export function validateReqBody(schema: Schema) {
   return (req: Request, res: Response, next: NextFunction) => {
+    logger.info("Validating request body");
     const { error, value } = schema.validate(req.body);
+
     if (error) {
-      return next(new ApiError(400, error.message));
+      logger.error("Error validating request body", { error });
+      next(new BadRequestError(error.message));
     }
+
     req.body = value;
+    next();
+  };
+}
+
+// function to validate request params
+export function validateReqParams(schema: Schema) {
+  return (req: Request, res: Response, next: NextFunction) => {
+    logger.info("Validating request params");
+    const { error, value } = schema.validate(req.params);
+
+    if (error) {
+      logger.error("Error validating request params", { error });
+      next(new BadRequestError(error.message));
+    }
+
+    req.params = value;
     next();
   };
 }

@@ -1,6 +1,6 @@
 import request from "supertest";
 import express from "express";
-// import { Roles } from "../../constants/Roles";
+import { Roles } from "../../constatnts/Roles";
 import config from "../../config";
 import userRoutes from "../../routes/user";
 

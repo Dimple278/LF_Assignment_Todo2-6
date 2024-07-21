@@ -1,9 +1,12 @@
 import { Request, Response, NextFunction } from "express";
 import ApiError from "../error/apiError";
-import logger from "../utils/logger";
+
+import loggerWithNameSpace from "../utils/logger";
+
+const logger = loggerWithNameSpace("ErrorHandling");
 
 // Error handler middleware
-export default function errorMiddleware(
+export function errorHandler(
   err: ApiError,
   req: Request,
   res: Response,
@@ -11,7 +14,7 @@ export default function errorMiddleware(
 ) {
   const statusCode = err.statusCode || 500;
   const message = err.message || "Internal Server Error";
-  // logger.error("Handling error", { statusCode, message, error: err });
+  logger.error("Handling error", { statusCode, message, error: err });
   res.status(statusCode).json({
     error: {
       message,
