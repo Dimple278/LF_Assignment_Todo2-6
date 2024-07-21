@@ -9,7 +9,6 @@ const config = {
     accessExpiration: "7d",
     refreshTokenExpiration: "7d",
   },
-
   test_jwt: process.env.TEST_JWT,
   database: {
     client: process.env.DB_CLIENT,
@@ -19,7 +18,6 @@ const config = {
     name: process.env.DB_NAME,
     port: process.env.DB_PORT,
   },
-
 };
 
 export default config;
