@@ -1,7 +1,8 @@
 import { Request, Response, NextFunction } from "express";
 import ApiError from "../error/apiError";
 import * as userService from "../service/userService";
-import loggerWithNameSpace from "../logger";
+import loggerWithNameSpace from "../utils/logger";
+import { StatusCodes } from "http-status-codes";
 
 const logger = loggerWithNameSpace("UserController");
 
@@ -13,15 +14,16 @@ export const getUser = (
   try {
     const userId = parseInt(req.params.id);
 
-    logger.info("Called getUser");
+    logger.info("Fetching user", { userId });
 
     const user = userService.fetchUserById(userId);
     if (!user) {
-      return next(new ApiError(404, "User not found"));
+      return next(new ApiError(StatusCodes.NOT_FOUND, "User not found"));
     }
-    res.json(user);
+    res.status(StatusCodes.OK).json(user);
   } catch (error) {
-    next(new ApiError(500, "Failed to fetch user"));
+    logger.error("Failed to fetch user", { error });
+    next(error);
   }
 };
 
@@ -31,28 +33,12 @@ export const getAllUsers = (
   next: NextFunction
 ): void => {
   try {
+    logger.info("Fetching all users");
     const users = userService.fetchUsers();
-    res.json(users);
+    res.status(StatusCodes.OK).json(users);
   } catch (error) {
-    next(new ApiError(500, "Failed to fetch users"));
-  }
-};
-
-export const loginUser = async (
-  req: Request,
-  res: Response,
-  next: NextFunction
-): Promise<void> => {
-  try {
-    const { email, password } = req.body;
-    const user = await userService.validateUserCredentials(email, password);
-    if (!user) {
-      return next(new ApiError(401, "Invalid email or password"));
-    }
-    const tokens = userService.generateTokens(user);
-    res.json(tokens);
-  } catch (error) {
-    next(new ApiError(500, "Failed to log in user"));
+    logger.error("Failed to fetch users", { error });
+    next(error);
   }
 };
 
@@ -60,35 +46,47 @@ export const createNewUser = async (
   req: Request,
   res: Response,
   next: NextFunction
-): Promise<void> => {
+) => {
   try {
     const { name, email, password } = req.body;
-    if (userService.fetchUserByEmail(email)) {
-      return next(new ApiError(400, "Email already in use"));
-    }
+    logger.info("Creating User");
     const newUser = await userService.createUser(name, email, password);
-    res.status(201).json(newUser);
+    res.status(StatusCodes.CREATED).json(newUser);
   } catch (error) {
-    next(new ApiError(500, "Failed to create user"));
+    logger.error("Failed to create user");
+    next(error);
   }
 };
 
-export const refreshToken = (
+export const updateUser = async (
   req: Request,
   res: Response,
   next: NextFunction
-): void => {
+): Promise<void> => {
   try {
-    const { refreshToken } = req.body;
-    if (!refreshToken) {
-      return next(new ApiError(400, "Refresh token is required"));
-    }
-    const tokens = userService.refreshAccessToken(refreshToken);
-    if (!tokens) {
-      return next(new ApiError(403, "Invalid refresh token"));
-    }
-    res.json(tokens);
+    const userId = parseInt(req.params.id);
+    const updateData = req.body;
+    logger.info("Updating user", { userId, updateData });
+    const updatedUser = await userService.updateUser(userId, updateData);
+    res.status(StatusCodes.OK).json(updatedUser);
   } catch (error) {
-    next(new ApiError(500, "Failed to refresh access token"));
+    logger.error("Failed to update user", { error });
+    next(error);
+  }
+};
+
+export const deleteUser = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+): Promise<void> => {
+  try {
+    const userId = parseInt(req.params.id);
+    logger.info("Deleting user", { userId });
+    const deletedUser = userService.deleteUser(userId);
+    res.status(StatusCodes.OK).json(deletedUser);
+  } catch (error) {
+    logger.error("Failed to delete user", { error });
+    next(error);
   }
 };

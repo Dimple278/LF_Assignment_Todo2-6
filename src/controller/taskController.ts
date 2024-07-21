@@ -1,84 +1,90 @@
-import { Request, Response, NextFunction } from "express";
-import ApiError from "../error/apiError";
+import { Response, NextFunction } from "express";
 import * as taskService from "../service/taskService";
 import { Task } from "../interface/taskInterface";
+import { AuthRequest } from "../middleware/authMIddleware";
+import { StatusCodes } from "http-status-codes";
+import loggerWithNameSpace from "../utils/logger";
+
+const logger = loggerWithNameSpace("TaskController");
 
 export const getAllTasks = (
-  req: Request,
+  req: AuthRequest,
   res: Response,
   next: NextFunction
 ): void => {
   try {
-    const tasks = taskService.fetchTasks();
-    res.json(tasks);
+    logger.info("Fetching all tasks", { userId: req.user!.id });
+
+    const tasks = taskService.fetchTasks(req.user!.id);
+
+    res.status(StatusCodes.OK).json(tasks);
   } catch (error) {
-    next(new ApiError(500, "Failed to fetch tasks"));
+    logger.error("Failed to fetch tasks", { error });
+    next(error);
   }
 };
 
 export const getTask = (
-  req: Request,
+  req: AuthRequest,
   res: Response,
   next: NextFunction
 ): void => {
   try {
     const taskId = parseInt(req.params.id);
-    const task = taskService.fetchTaskById(taskId);
-    if (!task) {
-      return next(new ApiError(404, "Task not found"));
-    }
-    res.json(task);
+    logger.info("Fetching task", { userId: req.user!.id, taskId });
+    const task = taskService.fetchTaskById(taskId, req.user!.id);
+    res.status(StatusCodes.OK).json(task);
   } catch (error) {
-    next(new ApiError(500, "Failed to fetch task"));
+    logger.error("Failed to fetch task", { error });
+    next(error);
   }
 };
 
-export const createNewTask = (
-  req: Request,
+export const createTask = (
+  req: AuthRequest,
   res: Response,
   next: NextFunction
 ): void => {
   try {
-    const { title, completed = false } = req.body;
-    const newTask = taskService.createTask(title, completed);
-    res.status(201).json(newTask);
+    const { title, completed } = req.body;
+    logger.info("Creating task", { userId: req.user!.id, title, completed });
+    const task = taskService.createTask(title, completed, req.user!.id);
+    res.status(StatusCodes.CREATED).json(task);
   } catch (error) {
-    next(new ApiError(500, "Failed to create task"));
+    logger.error("Failed to create task", { error });
+    next(error);
   }
 };
 
-export const updateExistingTask = (
-  req: Request,
+export const updateTask = (
+  req: AuthRequest,
   res: Response,
   next: NextFunction
 ): void => {
   try {
     const taskId = parseInt(req.params.id);
     const updates: Partial<Pick<Task, "title" | "completed">> = req.body;
-
-    const updatedTask = taskService.modifyTask(taskId, updates);
-    if (!updatedTask) {
-      return next(new ApiError(404, "Task not found"));
-    }
-    res.json(updatedTask);
+    logger.info("Updating task", { userId: req.user!.id, taskId, updates });
+    const updatedTask = taskService.modifyTask(taskId, updates, req.user!.id);
+    res.status(StatusCodes.OK).json(updatedTask);
   } catch (error) {
-    next(new ApiError(500, "Failed to update task"));
+    logger.error("Failed to update task", { error });
+    next(error);
   }
 };
 
-export const deleteExistingTask = (
-  req: Request,
+export const deleteTask = (
+  req: AuthRequest,
   res: Response,
   next: NextFunction
 ): void => {
   try {
     const taskId = parseInt(req.params.id);
-    const deletedTask = taskService.deleteTask(taskId);
-    if (!deletedTask) {
-      return next(new ApiError(404, "Task not found"));
-    }
-    res.json(deletedTask);
+    logger.info("Deleting task", { userId: req.user!.id, taskId });
+    const deletedTask = taskService.deleteTask(taskId, req.user!.id);
+    res.status(StatusCodes.OK).json(deletedTask);
   } catch (error) {
-    next(new ApiError(500, "Failed to delete task"));
+    logger.error("Failed to delete task", { error });
+    next(error);
   }
 };

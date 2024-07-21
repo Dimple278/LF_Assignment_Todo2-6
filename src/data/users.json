@@ -6,12 +6,6 @@
     "password": "abc@123"
   },
   {
-    "id": 2,
-    "name": "cde",
-    "email": "cde@gmail.com",
-    "password": "cde123"
-  },
-  {
     "id": 3,
     "name": "demo",
     "email": "demo@gmail.com",
@@ -28,5 +22,45 @@
     "name": "dimple",
     "email": "dimple@example.com",
     "password": "$2a$10$i04Gz8vOmN52yyhZZ.zpaewga8wIx709iOmjw0/ix9OKqgWx5eo46"
+  },
+  {
+    "id": 6,
+    "name": "nista",
+    "email": "nista@example.com",
+    "password": "$2a$10$tIkCcdnuaNsjtI4F9y70/.7rrMJQ3JsQtvjmyAhgl8THmMsV0bkPC"
+  },
+  {
+    "id": 7,
+    "name": "nista",
+    "email": "pista@example.com",
+    "password": "$2a$10$acAegnfG6IjpfePSRnyXoOVWtpb2.Eh1EIFtvDAutfM5N7QdJMbQC"
+  },
+  {
+    "id": 9,
+    "name": "test",
+    "email": "test@example.com",
+    "password": "$2a$10$yNqJ25U9L47VEm8e8XikFerlfKPcBgTZ9LvJZ1gSr3eczAQjAH21O",
+    "role": ""
+  },
+  {
+    "id": 11,
+    "name": "abc",
+    "email": "abc1@gmail.com",
+    "password": "Abcd@fghijk",
+    "role": ""
+  },
+  {
+    "id": 12,
+    "name": "Super Admin",
+    "email": "superadmin@example.com",
+    "password": "$2a$10$n18cVC7A6j19SSYbcjSPOeZ99KfFquwkuMe4t9CkdVwcpHmAZl/Sm",
+    "role": "superadmin"
+  },
+  {
+    "id": 13,
+    "name": "simple",
+    "email": "simple@gmail.com",
+    "password": "$2a$10$7MQddd7nHxy8C8QLUpkXA.3cNusT15A9PgwVZtB/KII8GN66ObL0u",
+    "role": "user"
   }
 ]
