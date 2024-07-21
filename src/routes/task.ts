@@ -1,17 +1,27 @@
 import express from "express";
-import * as taskController from "../controller/taskController";
+import {
+  createTask,
+  deleteTask,
+  getTaskById,
+  getTasks,
+  updateTask,
+} from "../controller/task";
+import { authenticate, authorize } from "../middleware/auth";
 import {
   validateReqBody,
   validateReqParams,
+  validateReqQuery,
 } from "../middleware/validationMiddleware";
 import {
-  taskIdParamSchema,
   createTaskBodySchema,
   updateTaskBodySchema,
-} from "../schema/taskSchema";
+  taskIdSchema,
+  getTaskQuerySchema,
+} from "../schema/task";
 
-import { authenticateJWT } from "../middleware/authMIddleware";
+const tasksRoutes = express.Router();
 
+<<<<<<< Updated upstream
 const taskRoutes = express.Router();
 
 taskRoutes.get("/", authenticateJWT, taskController.getAllTasks);
@@ -39,6 +49,47 @@ taskRoutes.delete(
   authenticateJWT,
   validateReqParams(taskIdParamSchema),
   taskController.deleteTask
+=======
+tasksRoutes.get(
+  "/",
+  authenticate,
+  authorize("tasks.get"),
+  validateReqQuery(getTaskQuerySchema),
+  getTasks
+>>>>>>> Stashed changes
 );
 
-export default taskRoutes;
+tasksRoutes.get(
+  "/:id",
+  authenticate,
+  authorize("tasks.get"),
+  validateReqParams(taskIdSchema),
+  getTaskById
+);
+
+tasksRoutes.post(
+  "/",
+  authenticate,
+  authorize("tasks.post"),
+  validateReqBody(createTaskBodySchema),
+  createTask
+);
+
+tasksRoutes.put(
+  "/:id",
+  authenticate,
+  authorize("tasks.put"),
+  validateReqParams(taskIdSchema),
+  validateReqBody(updateTaskBodySchema),
+  updateTask
+);
+
+tasksRoutes.delete(
+  "/:id",
+  authenticate,
+  authorize("tasks.delete"),
+  validateReqParams(taskIdSchema),
+  deleteTask
+);
+
+export default tasksRoutes;

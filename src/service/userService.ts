@@ -9,6 +9,7 @@ import {
   updateUser as updateUserModel,
   deleteUser as deleteUserModel,
   generateNextUserId,
+  UserModel,
 } from "../model/userModel";
 import BadRequestError from "../error/badRequestError";
 import notFoundError from "../error/notFoundError";
@@ -25,19 +26,23 @@ export const createUser = async (
   email: string,
   password: string
 ): Promise<Omit<User, "password">> => {
-  if (fetchUserByEmail(email)) {
+  const existingUser = await fetchUserByEmail(email);
+  if (existingUser) {
     throw new BadRequestError("Email already in use");
   }
+
   const hashedPassword = await bcrypt.hash(password, 10);
   const newUser: User = {
     id: generateNextUserId(),
     name,
     email,
     password: hashedPassword,
-    role: "user",
+    role: "",
   };
-  const addedUser = addUser(newUser);
-  const { password: _password, ...response } = addedUser;
+
+  const addedUser = await UserModel.create(newUser);
+
+  const { password: _, ...response } = addedUser;
   return response;
 };
 
@@ -45,7 +50,9 @@ export const updateUser = async (
   id: number,
   updateData: Partial<User>
 ): Promise<Omit<User, "password"> | null> => {
-  const user = updateUserModel(id, updateData);
+  const hashedPassword = await bcrypt.hash(updateData.password, 10);
+  // const user = updateUserModel(id, updateData);
+  const user = await UserModel.update(id, updateData);
   if (!user) {
     throw new notFoundError(`User with ID ${id} not found`);
   }

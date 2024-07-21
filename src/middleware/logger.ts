@@ -1,12 +1,10 @@
-import { NextFunction, Response, Request } from "express";
-import loggerWithNameSpace from "../utils/logger";
+import { NextFunction, Response } from "express";
+import loggerNameSpace from "../utils/logger";
+import { Request } from "../interface/auth";
 
-const logger = loggerWithNameSpace("RequestLogger");
+const logger = loggerNameSpace("RequestLogger");
 
 export function requestLogger(req: Request, res: Response, next: NextFunction) {
-  const { method, url, body, query, params } = req;
-  logger.info(`${method}:${url}`, {
-    details: { body, query, params },
-  });
+  logger.info(`${req.method}: ${req.url}`);
   next();
 }

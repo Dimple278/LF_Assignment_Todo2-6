@@ -1,6 +1,5 @@
 import request from "supertest";
 import express from "express";
-import { Roles } from "../../constants/Roles";
 import config from "../../config";
 import tasksRoutes from "../../routes/task";
 

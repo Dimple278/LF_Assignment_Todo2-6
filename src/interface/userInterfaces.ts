@@ -5,3 +5,9 @@ export interface User {
   password: string;
   role: string;
 }
+
+export interface GetUserQuery {
+  q?: string;
+  page?: number;
+  size?: number;
+}
