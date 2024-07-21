@@ -1,3 +1,4 @@
+
 import knex, { Knex } from "knex";
 import { baseKnexConfig } from "../knexfile";
 import toSnakeCase from "to-snake-case";
@@ -18,4 +19,6 @@ const knexConfig: Knex.Config = {
   },
 };
 
+
 export default knex(knexConfig);
+

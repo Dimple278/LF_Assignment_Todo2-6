@@ -19,7 +19,6 @@ export async function up(knex: Knex): Promise<void> {
       .bigInteger('created_by')
       .unsigned()
       .nullable()
-
       .references('id')
       .inTable(TABLE_NAME);
       

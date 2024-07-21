@@ -1,6 +1,6 @@
 import dotenv from "dotenv";
 
-dotenv.config();
+dotenv.config({ path: __dirname + "/../.env" });
 
 const config = {
   port: process.env.PORT,
@@ -9,8 +9,7 @@ const config = {
     accessExpiration: "7d",
     refreshTokenExpiration: "7d",
   },
-<<<<<<< Updated upstream
-=======
+
   test_jwt: process.env.TEST_JWT,
   database: {
     client: process.env.DB_CLIENT,
@@ -20,7 +19,7 @@ const config = {
     name: process.env.DB_NAME,
     port: process.env.DB_PORT,
   },
->>>>>>> Stashed changes
+
 };
 
 export default config;
