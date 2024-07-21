@@ -1,46 +1,55 @@
 import express from "express";
 import config from "./config";
-import router from "./routes/taskRoutes";
+import router from "./routes";
 import errorMiddleware from "./middleware/errorMiddleware";
-import userRouter from "./routes/userRoutes";
 import { requestLogger } from "./middleware/logger";
 import helmet from "helmet";
-import rateLimiter from "express-rate-limit";
+import rateLimit from "express-rate-limit";
 import cors from "cors";
-import ApiError from "./error/apiError";
 
 const app = express();
+const port = config.port;
 
-const limiter = rateLimiter({
+const limiter = rateLimit({
   windowMs: 60 * 1000,
-  max: 10,
-  message: new ApiError(429, "Too many requests, please try again later."),
+  limit: 10,
+  message: "Too many requests",
 });
 
-const allowedOrigins = ["https://www.test.com", "https://www.google.com"];
-
+// Add security headers
 app.use(helmet());
+
+// Limit requests
 app.use(limiter);
 
+// Allow only specific origins
+const allowedOrigins = ["https://example.com"];
+
+// Enable CORS
 app.use(
   cors({
     origin: (origin, callback) => {
-      if (!origin || allowedOrigins.includes(origin)) {
+      if (!origin || !allowedOrigins.includes(origin)) {
         callback(null, origin);
       } else {
-        callback(new ApiError(403, "Not Allowed by CORS"));
+        callback(new Error("Not allowed"));
       }
     },
   })
 );
 
+// Parse JSON
 app.use(express.json());
-app.use(requestLogger);
-app.use(router);
-app.use(userRouter);
 
+// For logger
+app.use(requestLogger);
+
+// Add routes
+app.use(router);
+
+// Error handling middleware
 app.use(errorMiddleware);
 
-app.listen(config.port, () => {
-  console.log(`Server listening at port:${config.port}`);
+app.listen(port, () => {
+  console.log(`Server is running on port ${port}`);
 });

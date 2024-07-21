@@ -12,33 +12,33 @@ import {
 
 import { authenticateJWT } from "../middleware/authMIddleware";
 
-const router = express.Router();
+const taskRoutes = express.Router();
 
-router.get("/tasks", authenticateJWT, taskController.getAllTasks);
-router.post(
-  "/tasks",
+taskRoutes.get("/", authenticateJWT, taskController.getAllTasks);
+taskRoutes.post(
+  "/",
   authenticateJWT,
   validateReqBody(createTaskBodySchema),
   taskController.createTask
 );
-router.get(
-  "/tasks/:id",
+taskRoutes.get(
+  "/:id",
   authenticateJWT,
   validateReqParams(taskIdParamSchema),
   taskController.getTask
 );
-router.put(
-  "/tasks/:id",
+taskRoutes.put(
+  "/:id",
   authenticateJWT,
   validateReqParams(taskIdParamSchema),
   validateReqBody(updateTaskBodySchema),
   taskController.updateTask
 );
-router.delete(
-  "/tasks/:id",
+taskRoutes.delete(
+  "/:id",
   authenticateJWT,
   validateReqParams(taskIdParamSchema),
   taskController.deleteTask
 );
 
-export default router;
+export default taskRoutes;

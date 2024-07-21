@@ -9,9 +9,7 @@ export const getAllTasks = (userId: number): Task[] =>
 
 export const getTaskById = (id: number, userId: number): Task => {
   const task = tasks.find((task) => task.id === id && task.userId === userId);
-  if (!task) {
-    throw new ApiError(404, `Task with ID ${id} not found`);
-  }
+
   return task;
 };
 
@@ -25,9 +23,9 @@ export const updateTask = (task: Task): Task => {
   const index = tasks.findIndex(
     (t) => t.id === task.id && t.userId === task.userId
   );
-  if (index === -1) {
-    throw new ApiError(404, `Task with ID ${task.id} not found`);
-  }
+  // if (index === -1) {
+  //   throw new ApiError(404, `Task with ID ${task.id} not found`);
+  // }
   tasks[index] = task;
   writeToFile("tasks", tasks);
   return task;
